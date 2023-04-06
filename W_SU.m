@@ -2,6 +2,7 @@ function mat = W_SU(MatrixSize,Root_System,FormMatrix,alpha,u)
     % Return the Weyl group element w_alpha(u) associated with alpha
     % Note that this is undefined when u is the zero vector
 
+    assert(Root_System.VectorLength == MatrixSize)
     assert(Root_System.IsRoot(alpha))
     assert(length(u) == RootSpaceDimensionSU(Root_System,alpha))
 
@@ -15,8 +16,10 @@ function mat = W_SU(MatrixSize,Root_System,FormMatrix,alpha,u)
         % length root, switch to viewing u as a complex number (element of the
         % field L)
         assert(dot(alpha,alpha)==2)
-        assumeAlso(u(1),'real')
-        assumeAlso(u(2),'real')
+        if isa(u,'sym')
+            assumeAlso(u(1),'real')
+            assumeAlso(u(2),'real')
+        end
         u_complex = u(1) + 1i*u(2);
         
         % u_prime is the vector version of -(u_complex)^(-1)
