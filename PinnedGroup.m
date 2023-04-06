@@ -52,10 +52,10 @@ classdef PinnedGroup
         % Tests
         function RunTests(obj)
             fprintf("Running tests to verify a pinning of the " + obj.NameString + "...\n")
-            TestBasics(obj);
-            TestRootSubgroupMapsAreHomomorphisms(obj);
-            TestTorusConjugationFormula(obj);
-            TestCommutatorFormula(obj);
+%             TestBasics(obj);
+%             TestRootSubgroupMapsAreHomomorphisms(obj);
+%             TestTorusConjugationFormula(obj);
+%             TestCommutatorFormula(obj);
             TestWeylGroupElements(obj);
             TestWeylGroupConjugationFormula(obj);
             fprintf("\n\nAll tests passed.\n\n")

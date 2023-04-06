@@ -1,4 +1,4 @@
-function C = WeylGroupConjugationCoefficientSU(MatrixSize,alpha,beta,v)
+function C = WeylGroupConjugationCoefficientSU(MatrixSize,root_system,FormMatrix,alpha,beta,u)
     % given two roots alpha, beta
     % compute the coefficient phi(v)
     % which is the input to X_{sig_alpha(beta)}( )

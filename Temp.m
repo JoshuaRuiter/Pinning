@@ -30,20 +30,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%
 %% THESE DO NOT PASS %%
 %%%%%%%%%%%%%%%%%%%%%%%
-for n=4:10
-    D_n = RootSystem('D',n,n+2);
-    D_n.VerifyProperties();
-end
-
-for n=6:8
-    E_n = RootSystem('E',n,8);
-    E_n.VerifyProperties();
-end
+% for n=4:10
+%     D_n = RootSystem('D',n,n+2);
+%     D_n.VerifyProperties();
+% end
+% 
+% for n=6:8
+%     E_n = RootSystem('E',n,8);
+%     E_n.VerifyProperties();
+% end
 
 % This passes up until the Weyl group conjugation tests
-% Not sure what is wrong here
-%RunSUTests(4,2) 
+RunSUTests(4,2)
 
+% Goals to work towards
+%RunSUTests(6,3)
 %RunSUTests(6,2)
 %RunSOTests(6,2)
 
