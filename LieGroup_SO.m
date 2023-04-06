@@ -16,11 +16,20 @@ for i=1:q
     X(i,q+2) = -c(2)*X(q+2, q+2+i);
     X(q+2+i,q+1) = -c(1)*X(q+1, i);
     X(q+2+i,q+2) = -c(2)*X(q+2, i);
-    for j=1:q
-        X(i,q+2+j) = sym(0);
-        X(q+2+i,j) = sym(0);
-        X(q+2+i,q+2+j) = -X(i,j);
+    X(i,q+2+i) = sym(0);
+    X(q+2+i,i) = sym(0);
+    X(q+2+1:n,q+2+1:n) = -transpose(X(1:q,1:q));
+    %for j=1:q
+        %X(q+2+i,q+2+j) = -X(i,j);
+    %end
+
+    for k=i:q
+        X(k,q+2+i) = -X(i,q+2+k);
+        X(q+2+k, i) = -X(q+2+i, k);
+
     end
+
+
 end
 
 X(q+1,q+1) = sym(0);
