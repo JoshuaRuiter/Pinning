@@ -25,7 +25,7 @@ classdef RootSystem
 
                 case 'A'
                     obj.RootList = RootSystem.BuildTypeA(Rank,VectorLength);
-                    assert(length(obj.RootList)==Rank*(Rank-1))
+                    assert(length(obj.RootList)==Rank*(Rank+1))
                 
                 case 'B'
                     obj.RootList = RootSystem.BuildTypeB(Rank,VectorLength);
@@ -38,18 +38,25 @@ classdef RootSystem
                 case 'BC'
                     obj.RootList = RootSystem.BuildTypeBC(Rank,VectorLength);
                     assert(length(obj.RootList)==2*Rank*(Rank+1))
-
+                
                 case 'D'
-                    % INCOMPLETE
+                    obj.RootList = RootSystem.BuildTypeD(Rank,VectorLength);
+                    assert(length(obj.RootList)==Rank*(Rank+3)-6)
 
                 case 'E'
-                    % INCOMPLETE
+                    assert(5 < Rank & Rank < 9)
+                    obj.RootList = RootSystem.BuildTypeE(Rank,VectorLength);
+                    assert(length(obj.RootList)==Rank*(Rank-5)+44)
 
                 case 'F'
-                    % INCOMPLETE
+                    assert(Rank == 4)
+                    obj.RootList = RootSystem.BuildTypeF(Rank,VectorLength);
+                    assert(length(obj.RootList)==48)
 
                 case 'G'
-                    % INCOMPLETE
+                    assert(Rank == 2)
+                    obj.RootList = RootSystem.BuildTypeG(Rank,VectorLength);
+                    assert(length(obj.RootList)==12)
 
                 otherwise
                     assert(false,'Invalid root system type. The valid types are A, B, C, BC, D, E, F, and G')
@@ -209,10 +216,11 @@ classdef RootSystem
     methods (Static)
 
         function myCellArray = BuildTypeA(Rank,VectorLength)
-            myCellArray = cell(1, Rank*(Rank-1));
+            assert(VectorLength>Rank)
+            myCellArray = cell(1, Rank*(Rank+1));
             index = 1;
-            for i=1:Rank
-                for j=1:Rank
+            for i=1:Rank+1
+                for j=1:Rank+1
                     if i ~= j 
                         x = zeros(1,VectorLength);
                         x(i) = 1;
@@ -225,6 +233,7 @@ classdef RootSystem
         end
         function myCellArray = BuildTypeB(Rank,VectorLength)
             % Build the type B root system
+            assert(VectorLength >= Rank)
             q = Rank;
             myCellArray = cell(1,2*q^2);
             index = 1;
@@ -271,8 +280,8 @@ classdef RootSystem
             end
         end
         function myCellArray = BuildTypeC(Rank,VectorLength)
-
             % Build the type C root system
+            assert(VectorLength >= Rank)
             q = Rank;
             myCellArray = cell(1,2*q^2);
             index = 1;
@@ -320,6 +329,7 @@ classdef RootSystem
         end
         function myCellArray = BuildTypeBC(Rank,VectorLength)
             % Build the type BC root system
+            assert(VectorLength >= Rank)
             q = Rank;
             myCellArray = cell(1,2*q*(q+1));
             index = 1;
@@ -376,20 +386,282 @@ classdef RootSystem
             end
         end
         function myCellArray = BuildTypeD(Rank,VectorLength) 
-            % INCOMPLETE
-            myCellArray = {};
+            % Technically, we could construct D3, but this is isomorphic to A3.
+            assert(Rank > 3)
+            assert(VectorLength >= Rank+2)
+            q = Rank;
+            myCellArray = cell(1,q^2+3*q-6);
+            % The roots are any of the following:
+            % The first 2 entries are +-1 (same sign) as are the next 2,
+                % and a later entry is +-2 (there are 8(q-2) of these)
+            % Entries 1-2 or 3-4 are +-2 (opposite sign, there are 4 total)
+            % 2 entries after 4 are +-2, opposite sign ((q-2)(q-3) of these)
+
+            % Start with the roots where 2 entries (after 4) are +-2
+            index = 1;
+            for i = 5:(q+2)
+                for j = 5:(q+1)
+                    myCellArray{index} = zeros(1, VectorLength);
+                    myCellArray{index}(i) = 2;
+                    if (j<i)
+                        myCellArray{index}(j) = -2;
+                    else
+                        myCellArray{index}(j+1) = -2;
+                    end
+                    index = index+1;
+                end
+                % Now add the vectors with 4 1s and a 2
+                for j = 0:7
+                    myCellArray{index} = zeros(1, VectorLength);
+                    if mod(j,2) == 0
+                        myCellArray{index}(1) = 1;
+                        myCellArray{index}(2) = 1;
+                    else
+                        myCellArray{index}(1) = -1;
+                        myCellArray{index}(2) = -1;
+                    end
+                    if mod(j,4) < 2
+                        myCellArray{index}(3) = 1;
+                        myCellArray{index}(4) = 1;
+                    else
+                        myCellArray{index}(3) = -1;
+                        myCellArray{index}(4) = -1;
+                    end
+                    if j < 4
+                        myCellArray{index}(i) = 2;
+                    else
+                        myCellArray{index}(i) = -2;
+                    end
+                    index = index+1;
+                end
+            end
+            % Finally, add (+-2,+-2,0,0...) and (0,0,+-2,+-2,...)
+            for i = 0:3
+                myCellArray{index} = zeros(1, VectorLength);
+                j = 1;
+                if i > 1
+                    j = 3;
+                end
+                if mod(i,2) == 0
+                    myCellArray{index}(j) = 2;
+                    myCellArray{index}(j+1) = 2;
+                else
+                    myCellArray{index}(j) = -2;
+                    myCellArray{index}(j+1) = -2;
+                end
+                index = index+1;
+            end
+
         end
         function myCellArray = BuildTypeE(Rank,VectorLength)
-            % INCOMPLETE
-            myCellArray = {};
+            assert(5 < Rank && Rank < 9)
+            assert(VectorLength > 7)
+            q = Rank;
+            myCellArray = cell(1,q^2-5*q+44);
+            % The roots are any of the following:
+            % Entries 1-2 or 3-4 are +-2 (same sign)
+            % 2 4-q entries are +-2 (opposite signs)
+            % Entries 1-4 are +-1 (1-2 same sign and 3-4 same sign)
+                % and a 5-q entry is +-2
+            % Entries 5-8 are +-1, and 4 is +-2 (same sign)
+                % or 3 is +-2 (opposite sign)
+            % All entries are +-1, 1-2 are same sign, 3-8 are same sign
+                % but flip the sign of entry 3 and some 5-q entry
+            
+            % Start with the roots of 2 +-2s.
+            index = 1;
+            for i = 0:3
+                sign = 2;
+                if mod(i,2) == 1
+                    sign = -2;
+                end
+                myCellArray{index} = zeros(1,VectorLength);
+                if i<2
+                    myCellArray{index}(1) = sign;
+                    myCellArray{index}(2) = sign;
+                else
+                    myCellArray{index}(3) = sign;
+                    myCellArray{index}(4) = sign;
+                end
+            end
+            for i = 5:q
+                for j = 5:q-1
+                    myCellArray{index} = zeros(1,VectorLength);
+                    myCellArray{index}(i) = 2;
+                    if j<i
+                        myCellArray{index}(j) = -2;
+                    else
+                        myCellArray{index}(j+1) = -2;
+                    end
+                    index = index + 1;
+                end
+            end
+            % Now add the roots of 4 +-1s and a +-2.
+            for i = 0:3
+                sign = 1;
+                if mod(i,2) == 1
+                    sign = -1;
+                end
+                myCellArray{index} = zeros(1,VectorLength);
+                if i<2
+                    myCellArray{index}(4) = sign*2;
+                    myCellArray{index}(5) = sign;
+                    myCellArray{index}(6) = sign;
+                    myCellArray{index}(7) = sign;
+                    myCellArray{index}(8) = sign;
+                else
+                    myCellArray{index}(3) = sign*-2;
+                    myCellArray{index}(5) = sign;
+                    myCellArray{index}(6) = sign;
+                    myCellArray{index}(7) = sign;
+                    myCellArray{index}(8) = sign;
+                end
+                index = index + 1;
+            end
+            for i = 0:3
+                for j = 5:q
+                    myCellArray{index} = zeros(1,VectorLength);
+                    if mod(i,2) == 0
+                        myCellArray{index}(1) = 1;
+                        myCellArray{index}(2) = 1;
+                    else
+                        myCellArray{index}(1) = -1;
+                        myCellArray{index}(2) = -1;
+                    end
+                    if i < 2
+                        myCellArray{index}(3) = 1;
+                        myCellArray{index}(4) = 1;
+                    else
+                        myCellArray{index}(3) = -1;
+                        myCellArray{index}(4) = -1;
+                    end
+                    myCellArray{index+1} = myCellArray{index};
+                    myCellArray{index}(j) = 2;
+                    myCellArray{index+1}(j) = -2;
+                    index = index + 2;
+                end
+            end
+            % Finally, add the roots of 8 +-1s.
+            for i = 5:q
+                myCellArray{index} = zeros(1,VectorLength);
+                myCellArray(3) = -1;
+                for j = 4:8
+                    myCellArray(j) = 1;
+                end
+                myCellArray(i) = -1;
+                myCellArray{index+1} = myCellArray{index};
+                myCellArray{index}(1) = 1;
+                myCellArray{index}(2) = 1;
+                myCellArray{index+1}(1) = -1;
+                myCellArray{index+1}(2) = -1;
+                index = index + 2;
+
+                myCellArray{index} = zeros(1,VectorLength);
+                myCellArray(3) = 1;
+                for j = 4:8
+                    myCellArray(j) = -1;
+                end
+                myCellArray(i) = 1;
+                myCellArray{index+1} = myCellArray{index};
+                myCellArray{index}(1) = 1;
+                myCellArray{index}(2) = 1;
+                myCellArray{index+1}(1) = -1;
+                myCellArray{index+1}(2) = -1;
+                index = index + 2;
+            end
+
         end
         function myCellArray = BuildTypeF(Rank,VectorLength)
-            % INCOMPLETE
-            myCellArray = {};
+            assert(Rank == 4)
+            assert(VectorLength > 3)
+            myCellArray = cell(1,48);
+            % 1, 2, or 4 entries are +-1 (+-2 in the case of 1 entry)
+            index = 1;
+            for i = 1:4
+                for j = 1:4
+                    myCellArray{index} = zeros(1,VectorLength);
+                    myCellArray{index+1} = zeros(1,VectorLength);
+                    if i<j
+                        myCellArray{index}(i) = 1;
+                        myCellArray{index}(j) = 1;
+                        myCellArray{index+1}(i) = -1;
+                        myCellArray{index+1}(j) = -1;
+                    elseif i>j
+                        myCellArray{index}(i) = 1;
+                        myCellArray{index}(j) = -1;
+                        myCellArray{index+1}(i) = -1;
+                        myCellArray{index+1}(j) = 1;
+                    else
+                        % Here, i==j
+                        myCellArray{index}(i) = 2;
+                        myCellArray{index+1}(j) = -2;
+                    end
+                    index = index + 2;
+                end
+            end
+            for i = 0:15
+                myCellArray{index} = zeros(1,VectorLength);
+                if mod(i,2) == 0
+                    myCellArray{index}(1) = 1;
+                else
+                    myCellArray{index}(1) = -1;
+                end
+                if mod(i,4) < 2
+                    myCellArray{index}(2) = 1;
+                else
+                    myCellArray{index}(2) = -1;
+                end
+                if mod(i,8) < 4
+                    myCellArray{index}(3) = 1;
+                else
+                    myCellArray{index}(3) = -1;
+                end
+                if i < 8
+                    myCellArray{index}(4) = 1;
+                else
+                    myCellArray{index}(4) = -1;
+                end
+                index = index + 1;
+            end
+
         end
         function myCellArray = BuildTypeG(Rank,VectorLength)
-            % INCOMPLETE
-            myCellArray = {};
+            assert(Rank == 2)
+            assert(VectorLength > 2)
+            myCellArray = cell(1,12);
+            % 2 entries are +-1, while the third is 0 or +-2.
+            % In addition, the entries must sum to 0.
+            index = 1;
+            for i = 1:3
+                j = 1;
+                k = 2;
+                if i == 1
+                    j = 3;
+                elseif i == 2
+                    k = 3;
+                end
+                myCellArray{index} = zeros(1,VectorLength);
+                myCellArray{index}(i) = 0;
+                myCellArray{index}(j) = 1;
+                myCellArray{index}(k) = -1;
+                index = index + 1;
+                myCellArray{index} = zeros(1,VectorLength);
+                myCellArray{index}(i) = 0;
+                myCellArray{index}(j) = -1;
+                myCellArray{index}(k) = 1;
+                index = index + 1;
+                myCellArray{index} = zeros(1,VectorLength);
+                myCellArray{index}(i) = -2;
+                myCellArray{index}(j) = 1;
+                myCellArray{index}(k) = 1;
+                index = index + 1;
+                myCellArray{index} = zeros(1,VectorLength);
+                myCellArray{index}(i) = 2;
+                myCellArray{index}(j) = -1;
+                myCellArray{index}(k) = -1;
+                index = index + 1;
+            end
+
         end
 
         function bool = IsProportionalRoot(alpha,beta)
