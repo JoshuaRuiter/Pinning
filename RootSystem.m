@@ -13,17 +13,31 @@ classdef RootSystem
         function obj = RootSystem(Type,Rank,VectorLength)
 
             assert(Rank > 0)
-            assert(VectorLength > 0)
-            assert(VectorLength>=Rank)
 
             obj.Type = Type;
             obj.Rank = Rank;
+            switch upper(Type)
+                case 'A'
+                    defaultVectorLength = Rank+1;
+                case 'E'
+                    defaultVectorLength = 8;
+                case 'G'
+                    defaultVectorLength = 3;
+                otherwise
+                    defaultVectorLength = Rank;
+            end
+            if nargin == 2
+                VectorLength = defaultVectorLength;
+            else
+                assert(VectorLength >= defaultVectorLength)
+            end
             obj.VectorLength = VectorLength;
 
             % Construct the list of roots
             switch upper(Type)
 
                 case 'A'
+                    defaultVectorLength = Rank + 1;
                     obj.RootList = RootSystem.BuildTypeA(Rank,VectorLength);
                     assert(length(obj.RootList)==Rank*(Rank+1))
                 
@@ -41,12 +55,22 @@ classdef RootSystem
                 
                 case 'D'
                     obj.RootList = RootSystem.BuildTypeD(Rank,VectorLength);
-                    assert(length(obj.RootList)==Rank*(Rank+3)-6)
+                    assert(length(obj.RootList)==2*Rank*(Rank-1))
 
                 case 'E'
+                    defaultVectorLength = 8;
                     assert(5 < Rank & Rank < 9)
                     obj.RootList = RootSystem.BuildTypeE(Rank,VectorLength);
-                    assert(length(obj.RootList)==Rank*(Rank-5)+44)
+                    switch Rank
+                        case 6
+                            assert(length(obj.RootList)==72)
+                        case 7
+                            assert(length(obj.RootList)==126)
+                        case 8
+                            assert(length(obj.RootList)==240)
+                        otherwise
+                            assert(false,'For root system E, rank must be 6, 7, or 8')
+                    end
 
                 case 'F'
                     assert(Rank == 4)
@@ -54,6 +78,7 @@ classdef RootSystem
                     assert(length(obj.RootList)==48)
 
                 case 'G'
+                    defaultVectorLength = 3;
                     assert(Rank == 2)
                     obj.RootList = RootSystem.BuildTypeG(Rank,VectorLength);
                     assert(length(obj.RootList)==12)
@@ -388,68 +413,39 @@ classdef RootSystem
         function myCellArray = BuildTypeD(Rank,VectorLength) 
             % Technically, we could construct D3, but this is isomorphic to A3.
             assert(Rank > 3)
-            assert(VectorLength >= Rank+2)
+            assert(VectorLength >= Rank)
             q = Rank;
-            myCellArray = cell(1,q^2+3*q-6);
-            % The roots are any of the following:
-            % The first 2 entries are +-1 (same sign) as are the next 2,
-                % and a later entry is +-2 (there are 8(q-2) of these)
-            % Entries 1-2 or 3-4 are +-2 (opposite sign, there are 4 total)
-            % 2 entries after 4 are +-2, opposite sign ((q-2)(q-3) of these)
-
-            % Start with the roots where 2 entries (after 4) are +-2
+            myCellArray = cell(1,2*q*(q-1));
+            % The roots have 2 entries that are +-1, either sign.
             index = 1;
-            for i = 5:(q+2)
-                for j = 5:(q+1)
-                    myCellArray{index} = zeros(1, VectorLength);
-                    myCellArray{index}(i) = 2;
-                    if (j<i)
-                        myCellArray{index}(j) = -2;
-                    else
-                        myCellArray{index}(j+1) = -2;
-                    end
-                    index = index+1;
+            
+            for i=1:q
+                for j=i+1:q
+
+                    % Make roots of the form alpha_i + alpha_j
+                    myCellArray{index} = zeros(1,VectorLength);
+                    myCellArray{index}(i) = 1;
+                    myCellArray{index}(j) = 1;
+                    index = index + 1;
+
+                    % Make roots of the form -(alpha_i + alpha_j)
+                    myCellArray{index} = zeros(1,VectorLength);
+                    myCellArray{index}(i) = -1;
+                    myCellArray{index}(j) = -1;
+                    index = index + 1;
+
+                    % Make roots of the form alpha_i - alpha_j
+                    myCellArray{index} = zeros(1,VectorLength);
+                    myCellArray{index}(i) = 1;
+                    myCellArray{index}(j) = -1;
+                    index = index + 1;
+
+                    % Make roots of the form -(alpha_i - alpha_j)
+                    myCellArray{index} = zeros(1,VectorLength);
+                    myCellArray{index}(i) = -1;
+                    myCellArray{index}(j) = 1;
+                    index = index + 1;
                 end
-                % Now add the vectors with 4 1s and a 2
-                for j = 0:7
-                    myCellArray{index} = zeros(1, VectorLength);
-                    if mod(j,2) == 0
-                        myCellArray{index}(1) = 1;
-                        myCellArray{index}(2) = 1;
-                    else
-                        myCellArray{index}(1) = -1;
-                        myCellArray{index}(2) = -1;
-                    end
-                    if mod(j,4) < 2
-                        myCellArray{index}(3) = 1;
-                        myCellArray{index}(4) = 1;
-                    else
-                        myCellArray{index}(3) = -1;
-                        myCellArray{index}(4) = -1;
-                    end
-                    if j < 4
-                        myCellArray{index}(i) = 2;
-                    else
-                        myCellArray{index}(i) = -2;
-                    end
-                    index = index+1;
-                end
-            end
-            % Finally, add (+-2,+-2,0,0...) and (0,0,+-2,+-2,...)
-            for i = 0:3
-                myCellArray{index} = zeros(1, VectorLength);
-                j = 1;
-                if i > 1
-                    j = 3;
-                end
-                if mod(i,2) == 0
-                    myCellArray{index}(j) = 2;
-                    myCellArray{index}(j+1) = 2;
-                else
-                    myCellArray{index}(j) = -2;
-                    myCellArray{index}(j+1) = -2;
-                end
-                index = index+1;
             end
 
         end
@@ -457,119 +453,85 @@ classdef RootSystem
             assert(5 < Rank && Rank < 9)
             assert(VectorLength > 7)
             q = Rank;
-            myCellArray = cell(1,q^2-5*q+44);
-            % The roots are any of the following:
-            % Entries 1-2 or 3-4 are +-2 (same sign)
-            % 2 4-q entries are +-2 (opposite signs)
-            % Entries 1-4 are +-1 (1-2 same sign and 3-4 same sign)
-                % and a 5-q entry is +-2
-            % Entries 5-8 are +-1, and 4 is +-2 (same sign)
-                % or 3 is +-2 (opposite sign)
-            % All entries are +-1, 1-2 are same sign, 3-8 are same sign
-                % but flip the sign of entry 3 and some 5-q entry
-            
-            % Start with the roots of 2 +-2s.
+            rootCount = 2^(q-1) + 2*(q-1)*(q-2);
+            if q==7
+                rootCount = rootCount + 2;
+            end
+            myCellArray = cell(1,rootCount);
+
+            % The roots are pairs of +-2 among the first q-1 entries
+                % or flip an even number of the first q-1 +-1s
+            % For E7, we also have (0,0,0,0,0,0,2,2) and the negative
             index = 1;
-            for i = 0:3
-                sign = 2;
-                if mod(i,2) == 1
-                    sign = -2;
-                end
+            % First, add the roots of 8 +-1s
+            for i = 0:2^(q-1)-1
+                signFlipCount = 0;
                 myCellArray{index} = zeros(1,VectorLength);
-                if i<2
-                    myCellArray{index}(1) = sign;
-                    myCellArray{index}(2) = sign;
-                else
-                    myCellArray{index}(3) = sign;
-                    myCellArray{index}(4) = sign;
+                for j = 1:8
+                    if mod(i,2^j) < 2^(j-1)
+                        myCellArray{index}(j) = 1;
+                        signFlipCount = signFlipCount + 1;
+                    else
+                        myCellArray{index}(j) = -1;
+                    end
+                end
+                % If an odd number of bits were flipped, overwrite with the next root.
+                if mod(signFlipCount, 2) == 0
+                    index = index+1;
+
+                    myCellArray{index} = zeros(1,VectorLength);
+                    for j = 1:8
+                        if mod(i,2^j) < 2^(j-1)
+                            myCellArray{index}(j) = -1;
+                        else
+                            myCellArray{index}(j) = 1;
+                        end
+                    end
+                    index = index+1;
                 end
             end
-            for i = 5:q
-                for j = 5:q-1
+            % Next, add roots of 2 +-2s
+            % Here, we essentially construct D_(q-1)
+            if q==8
+                % Technically we are still working with E8, but the
+                    % computation is simpler if we treat it as E9
+                % We did not do this earlier because we would get duplicate
+                    % roots of 8 +-1s
+                q = 9;
+            end
+            for i=1:q-1
+                for j=i+1:q-1
                     myCellArray{index} = zeros(1,VectorLength);
                     myCellArray{index}(i) = 2;
-                    if j<i
-                        myCellArray{index}(j) = -2;
-                    else
-                        myCellArray{index}(j+1) = -2;
-                    end
+                    myCellArray{index}(j) = 2;
+                    index = index + 1;
+
+                    myCellArray{index} = zeros(1,VectorLength);
+                    myCellArray{index}(i) = -2;
+                    myCellArray{index}(j) = -2;
+                    index = index + 1;
+                    myCellArray{index} = zeros(1,VectorLength);
+                    myCellArray{index}(i) = 2;
+                    myCellArray{index}(j) = -2;
+                    index = index + 1;
+
+                    myCellArray{index} = zeros(1,VectorLength);
+                    myCellArray{index}(i) = -2;
+                    myCellArray{index}(j) = 2;
                     index = index + 1;
                 end
             end
-            % Now add the roots of 4 +-1s and a +-2.
-            for i = 0:3
-                sign = 1;
-                if mod(i,2) == 1
-                    sign = -1;
-                end
+            % Finally, add the 2 additional roots for E7
+            if q==7
                 myCellArray{index} = zeros(1,VectorLength);
-                if i<2
-                    myCellArray{index}(4) = sign*2;
-                    myCellArray{index}(5) = sign;
-                    myCellArray{index}(6) = sign;
-                    myCellArray{index}(7) = sign;
-                    myCellArray{index}(8) = sign;
-                else
-                    myCellArray{index}(3) = sign*-2;
-                    myCellArray{index}(5) = sign;
-                    myCellArray{index}(6) = sign;
-                    myCellArray{index}(7) = sign;
-                    myCellArray{index}(8) = sign;
-                end
+                myCellArray{index}(7) = 2;
+                myCellArray{index}(8) = 2;
                 index = index + 1;
-            end
-            for i = 0:3
-                for j = 5:q
-                    myCellArray{index} = zeros(1,VectorLength);
-                    if mod(i,2) == 0
-                        myCellArray{index}(1) = 1;
-                        myCellArray{index}(2) = 1;
-                    else
-                        myCellArray{index}(1) = -1;
-                        myCellArray{index}(2) = -1;
-                    end
-                    if i < 2
-                        myCellArray{index}(3) = 1;
-                        myCellArray{index}(4) = 1;
-                    else
-                        myCellArray{index}(3) = -1;
-                        myCellArray{index}(4) = -1;
-                    end
-                    myCellArray{index+1} = myCellArray{index};
-                    myCellArray{index}(j) = 2;
-                    myCellArray{index+1}(j) = -2;
-                    index = index + 2;
-                end
-            end
-            % Finally, add the roots of 8 +-1s.
-            for i = 5:q
-                myCellArray{index} = zeros(1,VectorLength);
-                myCellArray(3) = -1;
-                for j = 4:8
-                    myCellArray(j) = 1;
-                end
-                myCellArray(i) = -1;
-                myCellArray{index+1} = myCellArray{index};
-                myCellArray{index}(1) = 1;
-                myCellArray{index}(2) = 1;
-                myCellArray{index+1}(1) = -1;
-                myCellArray{index+1}(2) = -1;
-                index = index + 2;
 
                 myCellArray{index} = zeros(1,VectorLength);
-                myCellArray(3) = 1;
-                for j = 4:8
-                    myCellArray(j) = -1;
-                end
-                myCellArray(i) = 1;
-                myCellArray{index+1} = myCellArray{index};
-                myCellArray{index}(1) = 1;
-                myCellArray{index}(2) = 1;
-                myCellArray{index+1}(1) = -1;
-                myCellArray{index+1}(2) = -1;
-                index = index + 2;
+                myCellArray{index}(7) = -2;
+                myCellArray{index}(8) = -2;
             end
-
         end
         function myCellArray = BuildTypeF(Rank,VectorLength)
             assert(Rank == 4)
