@@ -4,21 +4,31 @@
 RunSLTests(3)
 RunSLTests(4)
 RunSLTests(5)
-RunSOTests(4,1)
+RunSUTests(4,2)
 
 % Root system axioms
 for n=2:10
-    A_n = RootSystem('A',n,n+1);
+    A_n = RootSystem('A',n);
     A_n.VerifyProperties();
 
-    B_n = RootSystem('B',n,n);
+    B_n = RootSystem('B',n);
     B_n.VerifyProperties();
 
-    C_n = RootSystem('C',n,n);
+    C_n = RootSystem('C',n);
     C_n.VerifyProperties();
     
-    BC_n = RootSystem('BC',n,n);
+    BC_n = RootSystem('BC',n);
     BC_n.VerifyProperties();
+
+    if n >= 4
+        D_n = RootSystem('D',n);
+        D_n.VerifyProperties();
+    end
+end
+
+for n=6:8
+    E_n = RootSystem('E',n,8);
+    E_n.VerifyProperties();
 end
 
 G_2 = RootSystem('G',2,3);
@@ -30,18 +40,10 @@ F_4.VerifyProperties();
 %%%%%%%%%%%%%%%%%%%%%%%
 %% THESE DO NOT PASS %%
 %%%%%%%%%%%%%%%%%%%%%%%
-% for n=4:10
-%     D_n = RootSystem('D',n,n+2);
-%     D_n.VerifyProperties();
-% end
-% 
-% for n=6:8
-%     E_n = RootSystem('E',n,8);
-%     E_n.VerifyProperties();
-% end
 
-% This passes up until the Weyl group conjugation coefficient tests
-%RunSUTests(4,2)
+% I broke the Weyl group conjugation coefficient tests by making a change
+% that fixed it for SU_{4,2}
+%RunSOTests(4,1)
 
 % Goals to work towards
 %RunSOTests(6,2)

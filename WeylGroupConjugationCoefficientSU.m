@@ -43,20 +43,17 @@ function coeff = WeylGroupConjugationCoefficientSU(MatrixSize,Root_System,FormMa
             % alpha medium, beta is long
 
             % We can write alpha = +/- alpha_i +/- alpha_k
-            ik = find(beta~=0);
+            ik = find(alpha~=0);
             i = ik(1);
             k = ik(2);
             eps_i = alpha(i);
             eps_k = alpha(k);
-            alpha_j = zeros(1,Root_System.VectorLength);
-            alpha_j(j) = 1;
+            alpha_i = zeros(1,Root_System.VectorLength);
+            alpha_i(i) = 1;
             alpha_k = zeros(1,Root_System.VectorLength);
             alpha_k(k) = 1;
-            assert(isequal(alpha_k,eps_i*alpha_i + eps_k*alpha_k))
+            assert(isequal(alpha,eps_i*alpha_i + eps_k*alpha_k))
 
-            % INCOMPLETE
-            % also needs a 2^(1) or 2^(-1), depending on some factor that I
-            % cannot determine
             coeff = v*(-1)*eps_i*eps_k;
 
         else
@@ -109,8 +106,24 @@ function coeff = WeylGroupConjugationCoefficientSU(MatrixSize,Root_System,FormMa
     
         elseif IsMedium(alpha)
             % alpha and beta are medium length
-            % INCOMPLETE
-            coeff = v;
+
+            % We can make alpha = eps_p*alpha_p + eps_q*alpha_q
+            pq = find(alpha~=0);
+            p = pq(1);
+            q = pq(2);
+            eps_p = alpha(p);
+            eps_q = alpha(q);
+            alpha_p = zeros(1,Root_System.VectorLength);
+            alpha_p(p) = 1;
+            alpha_q = zeros(1,Root_System.VectorLength);
+            alpha_q(q) = 1;
+            assert(isequal(alpha,eps_p*alpha_p + eps_q*alpha_q))
+
+            if eps_j*eps_k*eps_p*eps_q == 1
+                coeff = -v;        
+            else
+                coeff = -v_complex_conjugate_vector;
+            end
 
         else
             % alpha is short
