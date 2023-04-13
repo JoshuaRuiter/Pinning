@@ -185,7 +185,14 @@ classdef PinnedGroup
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
                 dim_V_alpha = obj.RootSpaceDimension(obj.Root_System,alpha);
-                vec1 = ones(1,dim_V_alpha);
+
+                % OLD VERSION
+                %vec1 = ones(1,dim_V_alpha);
+
+                % NEW VERSION
+                vec1 = zeros(1,dim_V_alpha);
+                vec1(1) = 1;
+
                 w_alpha_1 = simplify(obj.WeylGroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,alpha,vec1));
                 for j=1:length(obj.RootList)
                     beta = obj.RootList{j};
@@ -201,7 +208,9 @@ classdef PinnedGroup
                     assert(dim_V_reflected_root == dim_V_beta)
                     assert(length(coeff)==dim_V_reflected_root)
                     RHS = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,reflected_root,coeff);
-                     assert(SymbolicIsEqual(LHS,RHS));
+                    
+                    assert(SymbolicIsEqual(LHS,RHS));
+
                 end
             end
             fprintf("passed.");

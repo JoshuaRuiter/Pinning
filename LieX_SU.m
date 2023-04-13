@@ -13,7 +13,9 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
     % assume all entries of u are "real"
     if isa(u,'sym')
         for k=1:length(u)
+            warning('off','all')
             assumeAlso(u(k),'real')
+            warning('on','all')
         end
     end
 
@@ -80,8 +82,10 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
         % and the "imaginary" part in the second entry
         assert(length(u)==2);
         if isa(u,'sym')
+            warning('off','all')
             assumeAlso(u(1),'real');
             assumeAlso(u(2),'real');
+            warning('on','all')
         end
 
         % switch to viewing u as a single complex number
