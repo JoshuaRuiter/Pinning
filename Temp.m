@@ -41,10 +41,7 @@ F_4.VerifyProperties();
 %%%%%%%%%%%%%%%%%%%%%%%
 %% THESE DO NOT PASS %%
 %%%%%%%%%%%%%%%%%%%%%%%
-
-
 % Goals to work towards
 %RunSOTests(6,2)
 %RunSUTests(6,3)
 %RunSUTests(6,2)
-
