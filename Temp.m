@@ -4,6 +4,7 @@
 RunSLTests(3)
 RunSLTests(4)
 RunSLTests(5)
+RunSOTests(4,1)
 RunSUTests(4,2)
 
 % Root system axioms
@@ -41,9 +42,6 @@ F_4.VerifyProperties();
 %% THESE DO NOT PASS %%
 %%%%%%%%%%%%%%%%%%%%%%%
 
-% I broke the Weyl group conjugation coefficient tests by making a change
-% that fixed it for SU_{4,2}
-%RunSOTests(4,1)
 
 % Goals to work towards
 %RunSOTests(6,2)
