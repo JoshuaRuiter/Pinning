@@ -209,7 +209,7 @@ classdef PinnedGroup
                     assert(length(coeff)==dim_V_reflected_root)
                     RHS = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,reflected_root,coeff);
                     
-                    assert(SymbolicIsEqual(LHS,RHS));
+                    assert(SymbolicIsEqual(LHS,RHS))
 
                 end
             end

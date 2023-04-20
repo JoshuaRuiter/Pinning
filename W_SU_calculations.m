@@ -1,7 +1,7 @@
 function W_SU_calculations()
-    % SU_{4,2}
-    n = 4;
-    q = 2;
+    % SU_{6,3}
+    n = 6;
+    q = 3;
     
     NameString = strcat('special unitary group of size',{' '},num2str(n),{' '},'with Witt index',{' '},num2str(q));
     MatrixSize = n;
@@ -17,21 +17,6 @@ function W_SU_calculations()
     end
     root_system = RootSystem(Type,RootSystemRank,MatrixSize);
     root_list = root_system.RootList;
-
-    LongRoots = {};
-    MediumRoots = {};
-    index_long = 1;
-    index_medium = 1;
-    for i=1:length(root_list)
-        alpha = root_list{i};
-        if dot(alpha,alpha)==4
-            LongRoots{index_long} = alpha;
-            index_long = index_long + 1;
-        elseif dot(alpha,alpha)==2
-            MediumRoots{index_medium} = alpha;
-            index_medium = index_medium + 1;
-        end
-    end
 
     % Building the FormMatrix
     if n-2*q > 0
@@ -56,94 +41,63 @@ function W_SU_calculations()
         RootSpaceDimension,RootSpaceMap,RootSubgroupMap,WeylGroupMap,GenericTorusElementMap,...
         IsGroupElement,IsTorusElement,IsLieAlgebraElement,...
         CommutatorCoefficientMap,WeylGroupCoefficientMap)
-    LongRoots
-    MediumRoots
+    obj = SU_n_q;
 
-    % Two long roots case
-    % This case is complete
-%     for i=1:length(LongRoots)
-%         alpha = LongRoots{i};
-%         assert(RootSpaceDimensionSU(root_system,alpha)==1);
-%         w_alpha_1 = W_SU(n,root_system,FormMatrix,alpha,1);
-%         w_alpha_1_inverse = w_alpha_1^(-1);
-%         for j=1:length(LongRoots)
-%             beta = LongRoots{j};
-%             assert(RootSpaceDimensionSU(root_system,beta)==1);
-%             syms v;
-%             X_beta_v = X_SU(n,root_system,FormMatrix,beta,v);
-%             conjugation = w_alpha_1*X_beta_v*w_alpha_1_inverse;
-% 
-%             reflected_root = RootSystem.ReflectRoot(alpha,beta);
-%             assert(RootSpaceDimensionSU(root_system,beta)==RootSpaceDimensionSU(root_system,reflected_root));
-%             syms phi_v;
-%             RHS = X_SU(n,root_system,FormMatrix,reflected_root,phi_v);
-% 
-%             position = find(RHS==phi_v);
-% 
-%             alpha
-%             beta
-%             conjugation(position)
-%         end
-%     end
+    % create a blank table
+    % Each row of the table decribes a root alpha, root beta, and the
+    %   resulting conjugation coefficient
+    % alpha is stored in the first q columns, beta in the q+1 to 2q
+    % columns, and the coefficient in the 2q+1 column
+    table = cell(length(root_list)^2,2*q+1);
+    row_number = 1;
 
-    % Alpha is medium, beta is long
-    % This case is complete
-%     for i=1:length(MediumRoots)
-%         alpha = MediumRoots{i};
-%         assert(RootSpaceDimensionSU(root_system,alpha)==2);
-%         w_alpha_1 = W_SU(n,root_system,FormMatrix,alpha,[1,0]);
-%         w_alpha_1_inverse = w_alpha_1^(-1);
-%         for j=1:length(LongRoots)
-%             beta = LongRoots{j};
-%             assert(RootSpaceDimensionSU(root_system,beta)==1);
-%             syms v;
-%             X_beta_v = X_SU(n,root_system,FormMatrix,beta,v);
-%             conjugation = w_alpha_1*X_beta_v*w_alpha_1_inverse;
-% 
-%             reflected_root = RootSystem.ReflectRoot(alpha,beta);
-%             assert(RootSpaceDimensionSU(root_system,beta)==RootSpaceDimensionSU(root_system,reflected_root));
-%             syms phi_v;
-%             RHS = X_SU(n,root_system,FormMatrix,reflected_root,phi_v);
-% 
-%             position = find(RHS==phi_v);
-% 
-%             alpha
-%             beta
-%             conjugation(position)
-%         end
-%     end
-
-    % The case where alpha is long and beta is medium is also complete
-   
-    % Both alpha and beta are medium
-    for i=1:length(MediumRoots)
-        alpha = MediumRoots{i};
-        assert(RootSpaceDimensionSU(root_system,alpha)==2);
-        w_alpha_1 = W_SU(n,root_system,FormMatrix,alpha,[1,0]);
+    for i=1:length(root_list)
+        alpha = root_list{i};
+        dim_V_alpha = obj.RootSpaceDimension(obj.Root_System,alpha);
+        vec1 = zeros(1,dim_V_alpha);
+        vec1(1) = 1;
+        w_alpha_1 = W_SU(n,root_system,FormMatrix,alpha,vec1);
         w_alpha_1_inverse = w_alpha_1^(-1);
-        for j=1:length(MediumRoots)
-            beta = MediumRoots{j};
-            assert(RootSpaceDimensionSU(root_system,beta)==2);
-            syms v1;
-            syms v2;
-            v = [v1,v2];
+        for j=1:length(root_list)
+            beta = root_list{j};
+            dim_V_beta = obj.RootSpaceDimension(obj.Root_System,beta);
+            v = sym('v',[dim_V_beta,1]);
             X_beta_v = X_SU(n,root_system,FormMatrix,beta,v);
-            conjugation = w_alpha_1*X_beta_v*w_alpha_1_inverse;
+            conjugation = simplify(w_alpha_1*X_beta_v*w_alpha_1_inverse);
 
             reflected_root = RootSystem.ReflectRoot(alpha,beta);
-            assert(RootSpaceDimensionSU(root_system,beta)==RootSpaceDimensionSU(root_system,reflected_root));
-            syms phi_v_1;
-            syms phi_v_2;
-            phi_v = [phi_v_1,phi_v_2];
-            RHS = X_SU(n,root_system,FormMatrix,reflected_root,phi_v);
+            assert(RootSpaceDimensionSU(root_system,reflected_root)==dim_V_beta);
 
-            position = find(RHS==phi_v_1+phi_v_2*1i);
-            
-            alpha
-            beta
-            conjugation(position)
+            if dim_V_beta == 1
+                syms phi_v
+                RHS = X_SU(n,root_system,FormMatrix,reflected_root,phi_v);
+                position = find(RHS==phi_v);
+                coeff = conjugation(position);
+
+            elseif dim_V_beta == 2
+                syms phi_v_1
+                syms phi_v_2
+                phi_v = [phi_v_1,phi_v_2];
+                RHS = X_SU(n,root_system,FormMatrix,reflected_root,phi_v);
+                position = find(RHS==phi_v_1+phi_v_2*1i);
+                coeff = conjugation(position);
+
+            else
+                assert(false)
+            end
+
+            % the first q entries of the row describe alpha
+            % the q+1 to 2q entries of the row describe beta
+            % the last (2q+1) entry gives the coefficient
+            for k=1:q
+                table{row_number,k} = alpha(k);
+                table{row_number,q+k} = beta(k);            
+            end
+            table{row_number,2*q+1} = coeff;
+            row_number = row_number+1;
         end
     end
+    table
 
 end
 
