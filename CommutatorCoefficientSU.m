@@ -328,11 +328,61 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(Root_System,alpha,b
 
         % In this case, there must be exactly 3 distinct indices among (m,n,p,q)
         % Furthermore, the matching indices have opposite signs
-        assert(n==p || n==q || m==p || m==q);
+        % We want to keep track of which entry is nonzero in both roots
+        if m == p || m == q
+            r = m;
+            s = n;
+            if m == p
+                t = q;
+            else
+                t = p;
+            end
+        elseif n == p || n == q
+            r = n;
+            s = m;
+            if n == p
+                t = q;
+            else
+                t = p;
+            end
+        else
+            assert(false);
+        end
 
-        % INCOMPLETE
         % In this case, N should be a vector of length 2
-        N = [0,0];
+        % The commutator coefficient depends on the order of r, s, and t
+        if alpha(r)==-alpha(s) && beta(r)==-beta(t)
+            % The entries of each root have opposite signs
+            % Here, the commutator coefficient is just the sign of beta(r)
+            N = beta(r)*complexProduct(u,v);
+        elseif r < s && r < t
+            if alpha(r)==alpha(s) && beta(r)==beta(t)
+                N = alpha(r)*vectorConjugate(complexProduct(u,v));
+            elseif (t-s)*beta(r)*beta(t) > 0
+                % Entries with the same sign are spaced farther apart than
+                % entries with the opposite sign.
+                N = beta(r)*complexProduct(u,v);
+            else
+                N = beta(r)*vectorConjugate(complexProduct(u,v));
+            end
+        elseif r > s && r > t
+            if alpha(r)==alpha(s) && beta(r)==beta(t)
+                N = alpha(r)*complexProduct(u,v);
+            elseif s < t
+                N = beta(r)*complexProduct(u,vectorConjugate(v));
+            else 
+                N = beta(r)*complexProduct(vectorConjugate(u),v);
+            end
+        else
+            % In this case, r is between s and t
+            if (t-s)*beta(r)*beta(t)>0 && alpha(s)==beta(t)
+                N = beta(r)*complexProduct(u,v);
+            elseif s < t
+                N = beta(r)*alpha(s)*beta(t)*complexProduct(u,vectorConjugate(v));
+            else 
+                N = beta(r)*alpha(s)*beta(t)*complexProduct(vectorConjugate(u),v);
+            end
+        end
 
     else
         % This should be impossible
@@ -486,4 +536,9 @@ function N = Commutator_Coefficient_Short_Medium(Root_System,alpha,beta,i,j,u,v)
     % INCOMPLETE
     N = 0;
 end
-
+function uv = complexProduct(u,v)
+    uv = [u(1)*v(1)-u(2)*v(2),u(1)*v(2)+u(2)*v(1)];
+end
+function uOut = vectorConjugate(uIn)
+    uOut = [uIn(1),-uIn(2)];
+end
