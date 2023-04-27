@@ -9,8 +9,8 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
    
     %%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    c1 = FormMatrix(q+1,q+1);
-    c2 = FormMatrix(q+2,q+2);
+    c1 = FormMatrix(q,q+1);
+    c2 = FormMatrix(q+1,q+2);
     
     %sum alpha to find out the type, possible sums are -2,-1,0,1,2
     function type = rootType(alpha)
