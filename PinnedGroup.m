@@ -185,15 +185,10 @@ classdef PinnedGroup
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
                 dim_V_alpha = obj.RootSpaceDimension(obj.Root_System,alpha);
-
-                % OLD VERSION
-                %vec1 = ones(1,dim_V_alpha);
-
-                % NEW VERSION
                 vec1 = zeros(1,dim_V_alpha);
                 vec1(1) = 1;
-
                 w_alpha_1 = simplify(obj.WeylGroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,alpha,vec1));
+
                 for j=1:length(obj.RootList)
                     beta = obj.RootList{j};
                     dim_V_beta = obj.RootSpaceDimension(obj.Root_System,beta);

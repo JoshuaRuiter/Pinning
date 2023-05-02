@@ -1,13 +1,15 @@
 %%%%%%%%%%%%%%%%
 %% THESE PASS %%
 %%%%%%%%%%%%%%%%
+
+%%% Group pinning tests
 % RunSLTests(3)
 % RunSLTests(4)
 % RunSLTests(5)
 % RunSOTests(4,1)
 % RunSUTests(4,2)
 
-% Root system axioms
+%%% Root system axioms
 % for n=2:10
 %     A_n = RootSystem('A',n);
 %     A_n.VerifyProperties();
@@ -42,17 +44,17 @@
 %% THESE DO NOT PASS %%
 %%%%%%%%%%%%%%%%%%%%%%%
 
-% Everything passes except Weyl group conjugation coefficients
-% Cases where the Weyl group conjugation formula passes tests:
-%   - two long roots
-% Remaining cases:
-%   - two medium roots
-%   - beta long, alpha medium
-%   - beta medium, alpha long
-RunSUTests(6,3)
-RunSUTests(8,4)
-RunSUTests(10,5)
+%%% Everything passes except Weyl group conjugation coefficients
+%%% Cases where the Weyl group conjugation formula passes tests:
+%%%   - two long roots
+%%% Remaining cases:
+%%%   - two medium roots
+%%%   - beta long, alpha medium
+%%%   - beta medium, alpha long
+% RunSUTests(6,3)
+% RunSUTests(8,4)
+% RunSUTests(10,5)
 
-% Goals to work towards
-%RunSOTests(6,2)
-%RunSUTests(6,2)
+%%% Goals to work towards
+% RunSOTests(6,2)
+RunSUTests(6,2)
