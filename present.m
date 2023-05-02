@@ -40,3 +40,6 @@ beta = [0 1 1];
 disp("In SU_6_3, the commutator of [1 -1 0] and [0 1 1] is")
 commutator = X_SU(6,r,H,alpha,u)*X_SU(6,r,H,beta,v)*X_SU(6,r,H,alpha,-u)*X_SU(6,r,H,beta,-v)
 coefficient = CommutatorCoefficientSU(3,r,alpha,beta,1,1,u,v)
+disp("In SO_62, the Pinning X12 and X1 are")
+X_alpha_12 = X_SO(6,r,B,alpha,u)
+X_alpha_1 = X_SO(6,r,B,beta,v)

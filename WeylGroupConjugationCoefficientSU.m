@@ -25,8 +25,12 @@ function coeff = WeylGroupConjugationCoefficientSU(MatrixSize,Root_System,FormMa
        
         if IsLong(alpha)
             % alpha and beta are long
+            % This case is done, at least in the quasisplit case
+            % This checks out for the (4,2) and (6,3) and (8,4) cases
+
             % coeff should be +/- v in this case
             % We can write alpha = +/- 2 alpha_i
+
             i = find(alpha~=0);
             eps_i = alpha(i)/2;
             alpha_i = zeros(1,Root_System.VectorLength);
@@ -43,6 +47,7 @@ function coeff = WeylGroupConjugationCoefficientSU(MatrixSize,Root_System,FormMa
             % alpha medium, beta is long
 
             % We can write alpha = +/- alpha_i +/- alpha_k
+            % with i < k by convention
             ik = find(alpha~=0);
             i = ik(1);
             k = ik(2);

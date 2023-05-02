@@ -1,7 +1,8 @@
 function W_SU_calculations()
-    % SU_{6,3}
-    n = 6;
-    q = 3;
+    n = 10;
+    q = 5;
+    my_directory = 'C:\Users\Joshua\Documents\Math\Research\Grinnell - Map 499 Spring 2023\Matlab\';
+    output_filename = [my_directory,'SU_10_5_weyl'];
     
     NameString = strcat('special unitary group of size',{' '},num2str(n),{' '},'with Witt index',{' '},num2str(q));
     MatrixSize = n;
@@ -40,7 +41,7 @@ function W_SU_calculations()
     SU_n_q = PinnedGroup(NameString,MatrixSize,root_system,FormMatrix,...
         RootSpaceDimension,RootSpaceMap,RootSubgroupMap,WeylGroupMap,GenericTorusElementMap,...
         IsGroupElement,IsTorusElement,IsLieAlgebraElement,...
-        CommutatorCoefficientMap,WeylGroupCoefficientMap)
+        CommutatorCoefficientMap,WeylGroupCoefficientMap);
     obj = SU_n_q;
 
     % create a blank table
@@ -58,7 +59,9 @@ function W_SU_calculations()
         vec1(1) = 1;
         w_alpha_1 = W_SU(n,root_system,FormMatrix,alpha,vec1);
         w_alpha_1_inverse = w_alpha_1^(-1);
+
         for j=1:length(root_list)
+
             beta = root_list{j};
             dim_V_beta = obj.RootSpaceDimension(obj.Root_System,beta);
             v = sym('v',[dim_V_beta,1]);
@@ -93,11 +96,12 @@ function W_SU_calculations()
                 table{row_number,k} = alpha(k);
                 table{row_number,q+k} = beta(k);            
             end
-            table{row_number,2*q+1} = coeff;
+            table{row_number,2*q+1} = string(coeff);
             row_number = row_number+1;
         end
     end
-    table
+
+    writecell(table,output_filename);
 
 end
 
