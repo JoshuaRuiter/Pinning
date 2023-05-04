@@ -16,6 +16,7 @@ Commutator(X_SL(3,0,0,alpha, u),X_SL(3,0,0,beta,v))
 c1 = sym("c1");
 c2 = sym("c2");
 B = GetB(6,2,[c1 c2]);
+
 r = RootSystem("B",2,6);
 u = sym("u");
 v = sym(["v1" "v2"]);

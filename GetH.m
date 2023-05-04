@@ -6,7 +6,7 @@ function myMatrix = GetH(n,q,vec_C)
     %       diag(vec_C) in the (3,3) block
 
     myMatrix = SymbolicZeros(n);
-    assert(length(vec_C)==(n-2*q));
+    assert(length(vec_C)==n-2*q);
 
     % create the two identity blocks
     for i=1:q
