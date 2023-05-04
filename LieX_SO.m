@@ -2,15 +2,21 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
     %UNTITLED Summary of this function goes here
     %   Detailed explanation goes here
     
+    q = Root_System.Rank;
     assert(Root_System.IsRoot(alpha));
+    assert(MatrixSize > 2*q);
     mat = SymbolicZeros(MatrixSize);
     n = MatrixSize;
-    q = (n-2)/2;
-   
+    diff = n-2*q;
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    c1 = FormMatrix(q,q+1);
-    c2 = FormMatrix(q+1,q+2);
+    c = sym('c',diff);
+    for i=1:diff
+        c(i) = FormMatrix(q+i, q+i);
+    end
+
+    %c1 = FormMatrix(q+1,q+1);
+    %c2 = FormMatrix(q+2,q+2);
     
     %sum alpha to find out the type, possible sums are -2,-1,0,1,2
     function type = rootType(alpha)
@@ -25,16 +31,16 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
     if type == 1 || type == -1
         for i = 1:q
             if alpha(i) == 1
-                mat(i,q+1) = -c1*v(1);
-                mat(i,q+2) = -c2*v(2);
-                mat(q+1,q+2+i) = v(1);
-                mat(q+2,q+2+i) = v(2);
+                for s=1:diff
+                    mat(i,q+s) = -c(s)*v(s);
+                    mat(q+s,q+diff+i) = v(s);
+                end
                 break
             elseif alpha(i) == -1
-                mat(q+1, i) = v(1);
-                mat(q+2, i) = v(2);
-                mat(q+2+i, q+1) = -c1*v(1);
-                mat(q+2+i, q+2) = -c2*v(2);
+                for s=1:(diff)
+                    mat(q+s,i) = v(s);
+                    mat(q+diff+i,q+s) = -c(s)*v(s);
+                end
                 break
             end
         end
