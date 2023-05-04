@@ -19,14 +19,9 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
     %c2 = FormMatrix(q+2,q+2);
     
     %sum alpha to find out the type, possible sums are -2,-1,0,1,2
-    function type = rootType(alpha)
-        type = 0;
-        for j=1:length(alpha)
-            type = type + alpha(j);
-        end
-    end
+    type = sum(alpha);
     
-    type = rootType(alpha);
+  
     % root with 2d map
     if type == 1 || type == -1
         for i = 1:q
@@ -56,7 +51,7 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
             end
         end
         mat(a,b) = v(1);
-        mat(q+2+b, q+2+a) = -v(1);
+        mat(q+diff+b, q+diff+a) = -v(1);
     elseif type == 2
         a = [0,0];
         index = 1;
@@ -66,8 +61,8 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
                 index = index + 1;
             end
         end
-        mat(a(1),q+2+a(2)) = v(1);
-        mat(a(2),q+2+a(1)) = -v(1);
+        mat(a(1),q+diff+a(2)) = v(1);
+        mat(a(2),q+diff+a(1)) = -v(1);
     elseif type == -2
         a = [0,0];
         index = 1;
@@ -77,7 +72,7 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
                 index = index + 1;
             end
         end
-        mat(q+2+a(1),a(2)) = v(1);
-        mat(q+2+a(2),a(1)) = -v(1);
+        mat(q+diff+a(1),a(2)) = v(1);
+        mat(q+diff+a(2),a(1)) = -v(1);
     end    
 end
