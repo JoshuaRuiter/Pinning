@@ -7,7 +7,7 @@
 % RunSLTests(4)
 % RunSLTests(5)
 % RunSOTests(4,1)
-% RunSUTests(4,2)
+RunSUTests(4,2)
 
 %%% Root system axioms
 % for n=2:10
@@ -51,7 +51,7 @@
 %%%   - two medium roots
 %%%   - beta long, alpha medium
 %%%   - beta medium, alpha long
-% RunSUTests(6,3)
+RunSUTests(6,3)
 % RunSUTests(8,4)
 % RunSUTests(10,5)
 

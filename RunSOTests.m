@@ -36,8 +36,15 @@ function RunSOTests(n,q)
 
 end
 
-function dim = RootSpaceDimensionSO(Root_System,alpha) %#ok<INUSD>
-    dim = Root_System.VectorLength - 2*Root_System.Rank;
+function dim = RootSpaceDimensionSO(MatrixSize,Root_System,alpha) %#ok<INUSD>
+    switch abs(sum(alpha))
+        case 0
+            dim = MatrixSize - 2*RootSystemRank;
+        case 1
+            dim = 1;
+        case 2
+            dim = MatrixSize - 2*RootSystemRank;
+    end
 end
 function bool = IsIn_little_so(MatrixSize, MatrixToTest, FormMatrix)
     % Return true if X belongs to the special orthogonal Lie algebra defined by B

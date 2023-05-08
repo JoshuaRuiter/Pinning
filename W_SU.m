@@ -4,7 +4,7 @@ function mat = W_SU(MatrixSize,Root_System,FormMatrix,alpha,u)
 
     n = MatrixSize;
     q = Root_System.Rank;
-    dim_V_alpha = RootSpaceDimensionSU(Root_System,alpha);
+    dim_V_alpha = RootSpaceDimensionSU(n,Root_System,alpha);
 
     assert(Root_System.VectorLength == n)
     assert(length(FormMatrix) == n)

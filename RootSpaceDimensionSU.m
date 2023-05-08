@@ -1,4 +1,4 @@
-function dim = RootSpaceDimensionSU(Root_System,alpha)
+function dim = RootSpaceDimensionSU(MatrixSize, Root_System, alpha)
 
     % The dimension is 1 for long roots, 2 for medium roots, 
     % and 2*(n-2*q) for short roots
@@ -6,11 +6,12 @@ function dim = RootSpaceDimensionSU(Root_System,alpha)
     % dot(alpha,alpha) gives the squared length of alpha,
     % which is 1 for short roots, 2 for medium roots, and 4 for long roots
 
+    n = MatrixSize;
+    q = Root_System.Rank;
+
     assert(strcmpi(Root_System.Type,'BC') ...
         || strcmpi(Root_System.Type,'C'))
     assert(Root_System.IsRoot(alpha))
-    n = Root_System.VectorLength;
-    q = Root_System.Rank;
 
     switch dot(alpha,alpha)
         case 1

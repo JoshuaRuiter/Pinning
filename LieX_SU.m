@@ -8,7 +8,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
 
     % validate inputs - alpha is a root, and u is the right length
     assert(Root_System.IsRoot(alpha))
-    assert(length(u) == RootSpaceDimensionSU(Root_System,alpha))
+    assert(length(u) == RootSpaceDimensionSU(n,Root_System,alpha))
 
     % assume all entries of u are "real"
     if isa(u,'sym')
@@ -29,7 +29,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
         
         % In this case, the input should be a scalar 
         % (a single element of the base field k)
-        assert(RootSpaceDimensionSU(Root_System,alpha)==1)
+        assert(RootSpaceDimensionSU(n,Root_System,alpha)==1)
         assert(length(u)==1);
         if isa(u,'sym')
             assumeAlso(u(k),'real')
@@ -53,7 +53,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
         i = find(alpha~=0);
 
         % In this case, the input should have length 2*(n-2*q)
-        assert(RootSpaceDimensionSU(Root_System,alpha)==2*(n-2*q))
+        assert(RootSpaceDimensionSU(n,Root_System,alpha)==2*(n-2*q))
         assert(length(u)==2*(n-2*q))
 
         % Convert u to a vector of length n-2*q, with complex entries
@@ -74,9 +74,8 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
             % alpha = -alpha_i
             for j = (2*q)+1 : n
 
-                % Haven't checked this
                 mat(q+i,j) = -u_complex(j-2*q);
-                mat(j,q) = u_complex(j-2*q);
+                mat(j,i) = u_complex(j-2*q);
             end
         else
             % something is wrong, throw an error
