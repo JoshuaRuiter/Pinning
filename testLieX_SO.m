@@ -10,7 +10,7 @@ beta = [1 0 0 0 0 0];
 disp("In SO_62, the Pinning X12 and X1 are")
 X_alpha_12 = X_SO(6,r,B,alpha,u)
 X_alpha_1 = X_SO(6,r,B,beta,v)
-%}
+
 c3 = sym('c',[1 3]);
 B = GetB(7,2,c3);
 r = RootSystem("B",2,7);
@@ -21,3 +21,17 @@ beta = [1 0 0 0 0 0 0];
 %disp("In SO_62, the Pinning X12 and X1 are")
 X_alpha_12 = X_SO(7,r,B,alpha,u)
 X_alpha_1 = X_SO(7,r,B,beta,v)
+%}
+c3 = sym('c',[1 3]);
+B = GetB(7,2,c3);
+r = RootSystem("B",2,7);
+u = sym("u", [1 3]);
+v = sym(["v1" "v2" "v3"]);
+w = sym("w");
+alpha = [0 1 0 0 0 0 0];
+beta = [1 0 0 0 0 0 0];
+gamma = [1 1 0 0 0 0 0];
+%disp("In SO_62, the Pinning X12 and X1 are")
+X_alpha_a = X_SO(7,r,B,alpha,u)
+X_alpha_b = X_SO(7,r,B,beta,v)
+X_alpha_g = X_SO(7,r,B,gamma,w)
