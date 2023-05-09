@@ -11,7 +11,7 @@ function my_matrix = GetB(n,q,vec_C)
 
     assert(length(vec_C)==n-2*q);
 
-    my_matrix = SymbolicZeros(n);
+    my_matrix = sym(zeros(n));
     % Put ones in for the two identity blocks
     for i=1:q
         my_matrix(i,n-q+i) = 1; % (1,3) identity block

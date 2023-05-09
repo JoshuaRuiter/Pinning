@@ -5,7 +5,7 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
     q = Root_System.Rank;
     assert(Root_System.IsRoot(alpha));
     assert(MatrixSize > 2*q);
-    mat = SymbolicZeros(MatrixSize);
+    mat = sym(zeros(MatrixSize));
     n = MatrixSize;
     diff = n-2*q;
 

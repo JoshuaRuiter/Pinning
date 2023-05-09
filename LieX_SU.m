@@ -20,7 +20,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
     end
 
     % create a nxn matrix of zeros, that allows symbolic
-    mat = SymbolicZeros(n);
+    mat = sym(zeros(MatrixSize));
     
     if IsLong(alpha)
         % In this case, the root alpha is of the form 
