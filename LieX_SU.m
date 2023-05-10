@@ -1,6 +1,6 @@
 function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
-    % Takes inputs alpha (a root), root_system the root system it comes from, 
-    % and u (a vector, possibly symbolic)
+    % Takes inputs alpha (a root), root_system the root system it 
+    % comes from, and u (a vector, possibly symbolic)
     % Output the associated element of the Lie algebra
 
     n = MatrixSize;
@@ -8,7 +8,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
 
     % validate inputs - alpha is a root, and u is the right length
     assert(Root_System.IsRoot(alpha))
-    assert(length(u) == RootSpaceDimensionSU(Root_System,alpha))
+    assert(length(u) == RootSpaceDimensionSU(n,Root_System,alpha))
 
     % assume all entries of u are "real"
     if isa(u,'sym')
@@ -20,7 +20,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
     end
 
     % create a nxn matrix of zeros, that allows symbolic
-    mat = SymbolicZeros(n);
+    mat = sym(zeros(MatrixSize));
     
     if IsLong(alpha)
         % In this case, the root alpha is of the form 
@@ -29,7 +29,11 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
         
         % In this case, the input should be a scalar 
         % (a single element of the base field k)
+        assert(RootSpaceDimensionSU(n,Root_System,alpha)==1)
         assert(length(u)==1);
+        if isa(u,'sym')
+            assumeAlso(u(k),'real')
+        end
         
         if sum(alpha) == 2
             % alpha = 2alpha_i
@@ -48,26 +52,30 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
         % +/- alpha_i for some i
         i = find(alpha~=0);
 
-        % In this case, the input should have length 2*(n-2q)
-        assert(length(u)==2*(n-2*q));
-        assumeAlso(u,'real');
+        % In this case, the input should have length 2*(n-2*q)
+        assert(RootSpaceDimensionSU(n,Root_System,alpha)==2*(n-2*q))
+        assert(length(u)==2*(n-2*q))
+
+        % Convert u to a vector of length n-2*q, with complex entries
+        u_complex = sym(zeros(1,n-2*q));
+        for j=1:n-2*q
+            u_complex(j) = u(2*j-1) + 1i*u(2*j);
+        end
         
         if sum(alpha) == 1
             % alpha = alpha_i
             for j = (2*q)+1 : n
 
-                % Cora's code
-                mat(i,j) = u(j-2*q);
-                mat(j,q+i) = -u(j-2*q);
+                mat(i,j) = u_complex(j-2*q);
+                mat(j,q+i) = -u_complex(j-2*q);
 
             end
         elseif sum(alpha) == -1
             % alpha = -alpha_i
             for j = (2*q)+1 : n
 
-                % Haven't checked this
-                mat(q+i,j) = -u(j-2*q);
-                mat(j,q) = u(j-2*q);
+                mat(q+i,j) = -u_complex(j-2*q);
+                mat(j,i) = u_complex(j-2*q);
             end
         else
             % something is wrong, throw an error
@@ -81,12 +89,15 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
         % which carries the "real" part in the first entry 
         % and the "imaginary" part in the second entry
         assert(length(u)==2);
-        if isa(u,'sym')
-            warning('off','all')
-            assumeAlso(u(1),'real');
-            assumeAlso(u(2),'real');
-            warning('on','all')
+        
+        warning('off','all')
+        if isa(u(1),'sym')
+            assumeAlso(u(1),'real')
         end
+        if isa(u(2),'sym')
+            assumeAlso(u(2),'real')
+        end
+        warning('on','all')
 
         % switch to viewing u as a single complex number
         u_complex = u(1) + 1i*u(2);

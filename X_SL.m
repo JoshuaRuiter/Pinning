@@ -1,4 +1,4 @@
-function mat = X_SL(MatrixSize, root_system, FormMatrix, alpha, u)
+function mat = X_SL(MatrixSize, Root_System, FormMatrix, alpha, u)
     % Given a positive integer n, a root alpha in the root system of SL_n,
     % and symbolic variable u, output the associated element X_alpha(u) 
     % of the root subgroup
@@ -11,5 +11,6 @@ function mat = X_SL(MatrixSize, root_system, FormMatrix, alpha, u)
     % It just so happens that the matrix exponential of LieX(alpha,u)
     % is just I + LieX(alpha,u) for the SLn case because 
     % LieX(alpha,u)^2 = 0
-    mat = eye(MatrixSize) + LieX_SL(MatrixSize,root_system,FormMatrix,alpha,u);
+    assert(Root_System.IsRoot(alpha));
+    mat = eye(MatrixSize) + LieX_SL(MatrixSize,Root_System,FormMatrix,alpha,u);
 end

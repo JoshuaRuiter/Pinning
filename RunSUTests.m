@@ -87,7 +87,7 @@ function mat = GenericTorusElementSU(MatrixSize, RootSystemRank, DiagonalValues)
         assumeAlso(t_i, 'real');
     end
 
-    mat = SymbolicZeros(MatrixSize);
+    mat = sym(zeros(MatrixSize));
     for i=1:RootSystemRank
         mat(i,i) = DiagonalValues(i);
         mat(RootSystemRank+i,RootSystemRank+i) = DiagonalValues(i)^(-1);

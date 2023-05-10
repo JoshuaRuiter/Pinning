@@ -65,7 +65,7 @@ classdef PinnedGroup
             fprintf("\n\t\tChecking root spaces belong to Lie algebra...")
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
-                dim_V_alpha = obj.RootSpaceDimension(obj.Root_System,alpha);
+                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
                 u = sym('u',[dim_V_alpha,1]);
                 LieX_alpha_u = obj.RootSpaceMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,alpha,u);
                 assert(obj.IsLieAlgebraElement(obj.MatrixSize,LieX_alpha_u,obj.FormMatrix))
@@ -75,7 +75,7 @@ classdef PinnedGroup
             fprintf("\n\t\tChecking root subgroups belong to the group...")
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
-                dim_V_alpha = obj.RootSpaceDimension(obj.Root_System,alpha);
+                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
                 u = sym('u',[dim_V_alpha,1]);
                 X_alpha_u = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,alpha,u);
                 assert(obj.IsGroupElement(obj.MatrixSize,X_alpha_u,obj.FormMatrix));
@@ -93,7 +93,7 @@ classdef PinnedGroup
             fprintf("\n\tChecking root subgroup maps are homomorphisms...");
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
-                dim_V_alpha = obj.RootSpaceDimension(obj.Root_System,alpha);
+                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
                 u = sym('u',[dim_V_alpha,1]);
                 v = sym('v',[dim_V_alpha,1]);
                 X_alpha_u = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,alpha,u);
@@ -112,7 +112,7 @@ classdef PinnedGroup
         
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
-                dim_V_alpha = obj.RootSpaceDimension(obj.Root_System,alpha);
+                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
                 u = sym('u',[dim_V_alpha,1]);
         
                 alpha_of_t = PinnedGroup.CharacterEval(obj.MatrixSize,alpha,t);
@@ -135,7 +135,7 @@ classdef PinnedGroup
         
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
-                dim_V_alpha = obj.RootSpaceDimension(obj.Root_System,alpha);
+                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
                 u = sym('u',[dim_V_alpha,1]);
                 X_alpha_u = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,alpha,u);
         
@@ -143,7 +143,7 @@ classdef PinnedGroup
                     beta = obj.RootList{j};
         
                     if obj.Root_System.IsRoot(alpha+beta) && ~RootSystem.IsProportionalRoot(alpha,beta)
-                        dim_V_beta = obj.RootSpaceDimension(obj.Root_System,beta);
+                        dim_V_beta = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, beta);
                         v = sym('v',[dim_V_beta,1]);
                         X_beta_v = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,beta,v);
                         LHS = Commutator(X_alpha_u, X_beta_v);
@@ -171,7 +171,7 @@ classdef PinnedGroup
             t = obj.GenericTorusElementMap(obj.MatrixSize, obj.RootSystemRank, vec_t);
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
-                dim_V_alpha = obj.RootSpaceDimension(obj.Root_System,alpha);
+                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
                 u = sym('u',[dim_V_alpha,1]);
                 w_alpha_u = obj.WeylGroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,alpha,u);
                 conjugation = simplify(w_alpha_u*t*w_alpha_u^(-1));
@@ -184,19 +184,14 @@ classdef PinnedGroup
             fprintf("\n\tChecking Weyl group conjugation formula...");
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
-                dim_V_alpha = obj.RootSpaceDimension(obj.Root_System,alpha);
-
-                % OLD VERSION
-                %vec1 = ones(1,dim_V_alpha);
-
-                % NEW VERSION
+                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
                 vec1 = zeros(1,dim_V_alpha);
                 vec1(1) = 1;
-
                 w_alpha_1 = simplify(obj.WeylGroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,alpha,vec1));
+
                 for j=1:length(obj.RootList)
                     beta = obj.RootList{j};
-                    dim_V_beta = obj.RootSpaceDimension(obj.Root_System,beta);
+                    dim_V_beta = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, beta);
                     v = sym('v',[dim_V_beta,1]);
         
                     X_beta_v = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,beta,v);
@@ -204,7 +199,7 @@ classdef PinnedGroup
         
                     reflected_root = RootSystem.ReflectRoot(alpha,beta);
                     coeff = obj.WeylGroupCoefficientMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,alpha,beta,v);
-                    dim_V_reflected_root = obj.RootSpaceDimension(obj.Root_System,reflected_root);
+                    dim_V_reflected_root = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, reflected_root);
                     assert(dim_V_reflected_root == dim_V_beta)
                     assert(length(coeff)==dim_V_reflected_root)
                     RHS = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.FormMatrix,reflected_root,coeff);

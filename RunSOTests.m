@@ -36,9 +36,7 @@ function RunSOTests(n,q)
 
 end
 
-function dim = RootSpaceDimensionSO(Root_System,alpha) %#ok<INUSD>
-    dim = Root_System.VectorLength - 2*Root_System.Rank;
-end
+
 function bool = IsIn_little_so(MatrixSize, MatrixToTest, FormMatrix)
     % Return true if X belongs to the special orthogonal Lie algebra defined by B
     bool = length(MatrixToTest)==MatrixSize &&...
@@ -52,7 +50,7 @@ function bool = IsInSO(MatrixSize, MatrixToTest, FormMatrix)
 end
 function myMatrix = GenericTorusElementSO(MatrixSize, RootSystemRank, vec_t)
     assert(length(vec_t)==RootSystemRank);
-    myMatrix = SymbolicZeros(MatrixSize);
+    myMatrix = sym(zeros(MatrixSize));
     for i=1:length(vec_t)
         myMatrix(i,i) = vec_t(i);
         myMatrix(MatrixSize - RootSystemRank + i, MatrixSize - RootSystemRank + i) = vec_t(i)^(-1);

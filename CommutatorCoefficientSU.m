@@ -5,6 +5,9 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
     % X_{i*alpha+j*beta} appearing on the right hand side of the formula
     % for the commutator [X_alpha(u), X_beta(v)]
 
+    n = MatrixSize;
+    q = Root_System.Rank;
+
     % Validating inputs
     assert(i>=1);
     assert(j>=1);
@@ -12,8 +15,8 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
     assert(Root_System.VectorLength == MatrixSize)
     assert(Root_System.IsRoot(alpha))
     assert(Root_System.IsRoot(beta))
-    assert(length(u) == RootSpaceDimensionSU(Root_System,alpha))
-    assert(length(v) == RootSpaceDimensionSU(Root_System,beta))
+    assert(length(u) == RootSpaceDimensionSU(n,Root_System,alpha))
+    assert(length(v) == RootSpaceDimensionSU(n,Root_System,beta))
 
     % If alpha and beta are proportional roots, then the commutator formula
     % does not apply, and we should throw an error when trying to compute 
@@ -194,7 +197,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
     % Validating output
     % N should always be a vector whose length is the dimension of the root
     % space for i*alpha+j*beta
-    assert(length(N) == RootSpaceDimensionSU(Root_System,i*alpha+j*beta))
+    assert(length(N) == RootSpaceDimensionSU(n,Root_System,i*alpha+j*beta))
 
 end
 
@@ -211,6 +214,8 @@ end
 function N = Commutator_Coefficient_Medium_Medium_Quasisplit(Root_System,alpha,beta,i,j,u,v)
     % alpha and beta are both medium length
     % the sum can be long or medium
+
+    n = Root_System.VectorLength;
 
     assert(IsMedium(alpha))
     assert(IsMedium(beta))
@@ -389,9 +394,11 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(Root_System,alpha,b
         assert(false,'The sum of two medium roots is a root but neither medium nor long.')
     end
 
-    assert(length(N) == RootSpaceDimensionSU(Root_System,i*alpha+j*beta))
+    assert(length(N) == RootSpaceDimensionSU(n,Root_System,i*alpha+j*beta))
 end
 function N = Commutator_Coefficient_Medium_Long_Quasisplit(Root_System,alpha,beta,i,j,u,v)
+
+    n = Root_System.VectorLength;
 
     % alpha is medium, beta is long
     assert(IsMedium(alpha))
@@ -482,7 +489,7 @@ function N = Commutator_Coefficient_Medium_Long_Quasisplit(Root_System,alpha,bet
         assert(false,"A medium and long root in C_n have an unexpected linear combination.")
     end
 
-    assert(length(N)==RootSpaceDimensionSU(Root_System,i*alpha+j*beta))
+    assert(length(N)==RootSpaceDimensionSU(n,Root_System,i*alpha+j*beta))
 
 end
 function N = Commutator_Coefficient_Medium_Medium(Root_System,alpha,beta,i,j,u,v)

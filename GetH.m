@@ -5,8 +5,8 @@ function myMatrix = GetH(n,q,vec_C)
     %       (q x q) negative identity in the (2,1) block
     %       diag(vec_C) in the (3,3) block
 
-    myMatrix = SymbolicZeros(n);
-    assert(length(vec_C)==(n-2*q));
+    myMatrix = sym(zeros(n));
+    assert(length(vec_C)==n-2*q);
 
     % create the two identity blocks
     for i=1:q

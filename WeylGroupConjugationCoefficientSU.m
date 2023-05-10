@@ -9,8 +9,8 @@ function coeff = WeylGroupConjugationCoefficientSU(MatrixSize,Root_System,FormMa
     assert(Root_System.IsRoot(alpha))
     assert(Root_System.IsRoot(beta))
     reflected_root = RootSystem.ReflectRoot(alpha,beta);
-    assert(RootSpaceDimensionSU(Root_System,beta) == length(v))
-    assert(RootSpaceDimensionSU(Root_System,reflected_root) == RootSpaceDimensionSU(Root_System,beta))
+    assert(RootSpaceDimensionSU(MatrixSize,Root_System,beta) == length(v))
+    assert(RootSpaceDimensionSU(MatrixSize,Root_System,reflected_root) == RootSpaceDimensionSU(MatrixSize,Root_System,beta))
 
     if IsLong(beta)
 
@@ -144,7 +144,7 @@ function coeff = WeylGroupConjugationCoefficientSU(MatrixSize,Root_System,FormMa
         assert(false,'Non-quasisplit case incomplete for Weyl group conjugation coefficients.')
     end
 
-    assert(length(coeff)==RootSpaceDimensionSU(Root_System,reflected_root))
+    assert(length(coeff)==RootSpaceDimensionSU(MatrixSize,Root_System,reflected_root))
 
 end
 
