@@ -20,7 +20,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
     end
 
     % create a nxn matrix of zeros, that allows symbolic
-    mat = sym(zeros(MatrixSize));
+    mat = SymbolicZeros(n);
     
     if IsLong(alpha)
         % In this case, the root alpha is of the form 
@@ -37,10 +37,10 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
         
         if sum(alpha) == 2
             % alpha = 2alpha_i
-            mat(i,i+q) = u;
+            mat(i,i+q) = u*1i;
         elseif sum(alpha) == -2
             % alpha = -2alpha_i
-            mat(i+q,i) = u;
+            mat(i+q,i) = u*1i;
         else
             % something is wrong, throw an error
             printf("A long root has the wrong form.");
@@ -58,24 +58,26 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
 
         % Convert u to a vector of length n-2*q, with complex entries
         u_complex = sym(zeros(1,n-2*q));
+        c = sym(zeros(1,n-2*q));
         for j=1:n-2*q
             u_complex(j) = u(2*j-1) + 1i*u(2*j);
+            c(j) = FormMatrix(2*q+j,2*q+j);
         end
         
         if sum(alpha) == 1
             % alpha = alpha_i
             for j = (2*q)+1 : n
 
-                mat(i,j) = u_complex(j-2*q);
-                mat(j,q+i) = -u_complex(j-2*q);
+                mat(i,j) = c(j-2*q)*u_complex(j-2*q);
+                mat(j,q+i) = -conj(u_complex(j-2*q));
 
             end
         elseif sum(alpha) == -1
             % alpha = -alpha_i
             for j = (2*q)+1 : n
 
-                mat(q+i,j) = -u_complex(j-2*q);
-                mat(j,i) = u_complex(j-2*q);
+                mat(q+i,j) = -c(j-2*q)*u_complex(j-2*q);
+                mat(j,i) = conj(u_complex(j-2*q));
             end
         else
             % something is wrong, throw an error
@@ -122,7 +124,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
             assert(i<j);
 
             mat(i,j+q) = u_complex;
-            mat(j,i+q) = conj(u_complex);
+            mat(j,i+q) = -conj(u_complex);
 
         elseif sum(alpha)==-2
             % alpha = -alpha_i - alpha_j, with i and j distinct
@@ -136,7 +138,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
             assert(i<j);
 
             mat(j+q,i) = u_complex;
-            mat(i+q,j) = conj(u_complex);
+            mat(i+q,j) = -conj(u_complex);
         else
             % something is wrong, throw an error
             printf("A normal root isn't of the right form.");
