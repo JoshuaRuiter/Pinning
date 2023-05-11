@@ -544,18 +544,29 @@ classdef RootSystem
                     myCellArray{index} = zeros(1,VectorLength);
                     myCellArray{index+1} = zeros(1,VectorLength);
                     if i<j
+                        % make a root of the form alpha_i + alpha_j
                         myCellArray{index}(i) = 1;
                         myCellArray{index}(j) = 1;
+
+                        % make a root of the form -alpha_i - alpha_j
                         myCellArray{index+1}(i) = -1;
                         myCellArray{index+1}(j) = -1;
                     elseif i>j
+
+                        % make a root of the form alpha_i - alpha_j
                         myCellArray{index}(i) = 1;
                         myCellArray{index}(j) = -1;
+
+                        % make a root of the form -alpha_i + alpha_j
                         myCellArray{index+1}(i) = -1;
                         myCellArray{index+1}(j) = 1;
                     else
                         % Here, i==j
+
+                        % make a root of the form 2alpha_i
                         myCellArray{index}(i) = 2;
+
+                        % make a root of the form -2alpha_i
                         myCellArray{index+1}(j) = -2;
                     end
                     index = index + 2;
@@ -563,6 +574,8 @@ classdef RootSystem
             end
             for i = 0:15
                 myCellArray{index} = zeros(1,VectorLength);
+
+                % make a root of the form +/- alpha_i +/- alpha_j +/- alpha_k +/- alpha_l
                 if mod(i,2) == 0
                     myCellArray{index}(1) = 1;
                 else
