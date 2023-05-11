@@ -52,6 +52,6 @@ function myMatrix = GenericTorusElementSL(MatrixSize, RootSystemRank, vec_t)
     myMatrix = diag(vec_t);
     assert(length(myMatrix)==MatrixSize);
 end
-function dim = RootSpaceDimensionSL(RootSystem,alpha,MatrixSize,RootSystemRank) %#ok<INUSD> 
+function dim = RootSpaceDimensionSL(MatrixSize,Root_System,alpha) %#ok<INUSD> 
     dim = 1;
 end

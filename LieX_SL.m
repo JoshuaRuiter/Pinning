@@ -8,6 +8,6 @@ function mat = LieX_SL(MatrixSize, Root_System, FormMatrix, alpha, u)
     rowNumber = alpha==1;
     columnNumber = alpha==-1;
 
-    mat = SymbolicZeros(MatrixSize);
+    mat = sym(zeros(MatrixSize));
     mat(rowNumber,columnNumber) = u;
 end
