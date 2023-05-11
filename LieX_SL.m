@@ -5,8 +5,8 @@ function mat = LieX_SL(MatrixSize, Root_System, FormMatrix, alpha, u)
     
     % rowNumber is the row number of where the nonzero entry goes
     % columnNumber is the column of where the nonzero entry goes
-    rowNumber = find(alpha==1);
-    columnNumber = find(alpha==-1);
+    rowNumber = alpha==1;
+    columnNumber = alpha==-1;
 
     mat = SymbolicZeros(MatrixSize);
     mat(rowNumber,columnNumber) = u;
