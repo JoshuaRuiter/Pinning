@@ -1,4 +1,4 @@
-function RunSUTests(n,q)
+function RunSUTests(n,q,eps)
 
     % Use the PinnedGroup class to verify a pinning of SU_{n,q}
 
@@ -17,12 +17,17 @@ function RunSUTests(n,q)
     root_system = RootSystem(Type,RootSystemRank,MatrixSize);
 
     % Building the FormMatrix
-    if n-2*q > 0
+    if n > 2*q
         vec_C = sym('c',[1,n-2*q]);
-        FormMatrix = GetH(n,q,vec_C);
     else
-        FormMatrix = GetH(n,q,[]);
+        vec_C = [];
     end
+    if eps == 1
+        label = 'hermitian';
+    else
+        label = 'skew-hermitian';
+    end
+    Form = NIForm(n,q,eps,vec_C,label);
 
     RootSpaceDimension = @RootSpaceDimensionSU;
     RootSpaceMap = @LieX_SU;
@@ -35,7 +40,7 @@ function RunSUTests(n,q)
     CommutatorCoefficientMap = @CommutatorCoefficientSU;
     WeylGroupCoefficientMap = @WeylGroupConjugationCoefficientSU;
 
-    SU_n_q = PinnedGroup(NameString,MatrixSize,root_system,FormMatrix,...
+    SU_n_q = PinnedGroup(NameString,MatrixSize,root_system,Form,...
         RootSpaceDimension,RootSpaceMap,RootSubgroupMap,WeylGroupMap,GenericTorusElementMap,...
         IsGroupElement,IsTorusElement,IsLieAlgebraElement,...
         CommutatorCoefficientMap,WeylGroupCoefficientMap);
@@ -63,15 +68,15 @@ function bool = IsTorusElementSU(MatrixSize, RootSystemRank, MatrixToTest)
         bool = bool && (MatrixToTest(i,i) == 1);
     end
 end
-function bool = IsIn_little_su(MatrixSize,MatrixToTest,FormMatrix)
+function bool = IsIn_little_su(MatrixSize,MatrixToTest,Form)
     bool = (length(MatrixToTest)==MatrixSize && ...
         trace(MatrixToTest)==0 && ...
-        SymbolicIsEqual(ctranspose(MatrixToTest)*FormMatrix,-FormMatrix*MatrixToTest));
+        SymbolicIsEqual(ctranspose(MatrixToTest)*Form.Matrix,-Form.Matrix*MatrixToTest));
 end
-function bool = IsInSU(MatrixSize,MatrixToTest,FormMatrix)
+function bool = IsInSU(MatrixSize,MatrixToTest,Form)
     bool = (length(MatrixToTest)==MatrixSize && ...
         det(MatrixToTest) == 1 && ...
-        SymbolicIsEqual(ctranspose(MatrixToTest)*FormMatrix*MatrixToTest,FormMatrix));
+        SymbolicIsEqual(ctranspose(MatrixToTest)*Form.Matrix*MatrixToTest,Form.Matrix));
 end
 function mat = GenericTorusElementSU(MatrixSize, RootSystemRank, DiagonalValues)
     % given a vector [t_1, t_2, t_3, ... t_q] of length q = RootSystemRank

@@ -1,10 +1,11 @@
-function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
+function mat = LieX_SU(MatrixSize, Root_System, NISHForm, alpha, u)
     % Takes inputs alpha (a root), root_system the root system it 
     % comes from, and u (a vector, possibly symbolic)
     % Output the associated element of the Lie algebra
 
     n = MatrixSize;
     q = Root_System.Rank;
+    H = NISHForm.Matrix;
 
     % validate inputs - alpha is a root, and u is the right length
     assert(Root_System.IsRoot(alpha))
@@ -20,7 +21,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
     end
 
     % create a nxn matrix of zeros, that allows symbolic
-    mat = SymbolicZeros(n);
+    mat = sym(zeros(n));
     
     if IsLong(alpha)
         % In this case, the root alpha is of the form 
@@ -61,7 +62,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
         c = sym(zeros(1,n-2*q));
         for j=1:n-2*q
             u_complex(j) = u(2*j-1) + 1i*u(2*j);
-            c(j) = FormMatrix(2*q+j,2*q+j);
+            c(j) = H(2*q+j,2*q+j);
         end
         
         if sum(alpha) == 1

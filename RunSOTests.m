@@ -8,13 +8,13 @@ function RunSOTests(n,q)
     % Setting up the root system
     Root_System = RootSystem('B',q,n);
 
-    % Building the FormMatrix
-    if n-2*q > 0
+    % Building the form matrix B
+    if n > 2*q
         vec_C = sym('c',[1,n-2*q]);
-        FormMatrix = GetB(n,q,vec_C);
     else
-        FormMatrix = GetB(n,q,[]);
+        vec_C = [];
     end
+    Form = NIForm(n,q,1,vec_C,'symmetric bilinear');
 
     RootSpaceDimension = @RootSpaceDimensionSO;
     RootSpaceMap = @LieX_SO;
@@ -27,7 +27,7 @@ function RunSOTests(n,q)
     CommutatorCoefficientMap = @CommutatorCoefficientSO;
     WeylGroupCoefficientMap = @WeylGroupConjugationCoefficientSO;
 
-    SO_n_q = PinnedGroup(NameString,MatrixSize,Root_System,FormMatrix,...
+    SO_n_q = PinnedGroup(NameString,MatrixSize,Root_System,Form,...
         RootSpaceDimension,RootSpaceMap,RootSubgroupMap,WeylGroupMap,GenericTorusElementMap,...
         IsGroupElement,IsTorusElement,IsLieAlgebraElement,...
         CommutatorCoefficientMap,WeylGroupCoefficientMap);
@@ -37,16 +37,16 @@ function RunSOTests(n,q)
 end
 
 
-function bool = IsIn_little_so(MatrixSize, MatrixToTest, FormMatrix)
+function bool = IsIn_little_so(MatrixSize, MatrixToTest, Form)
     % Return true if X belongs to the special orthogonal Lie algebra defined by B
     bool = length(MatrixToTest)==MatrixSize &&...
-        SymbolicIsEqual(transpose(MatrixToTest)*FormMatrix,-FormMatrix*MatrixToTest);
+        SymbolicIsEqual(transpose(MatrixToTest)*Form.Matrix,-Form.Matrix*MatrixToTest);
 end
-function bool = IsInSO(MatrixSize, MatrixToTest, FormMatrix)
+function bool = IsInSO(MatrixSize, MatrixToTest, Form)
     % Return true if X=MatrixToTest belongs to the special orthogonal group 
-    % defined by B=FormMatrix
+    % defined by B=Form.Matrix
     bool = length(MatrixToTest)==MatrixSize && ...
-        SymbolicIsEqual(transpose(MatrixToTest)*FormMatrix*MatrixToTest, FormMatrix);
+        SymbolicIsEqual(transpose(MatrixToTest)*Form.Matrix*MatrixToTest, Form.Matrix);
 end
 function myMatrix = GenericTorusElementSO(MatrixSize, RootSystemRank, vec_t)
     assert(length(vec_t)==RootSystemRank);
