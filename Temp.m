@@ -56,5 +56,6 @@
 % RunSUTests(10,5)
 
 %%% Goals to work towards
-RunSOTests(6,2)
-% RunSUTests(6,2)
+% RunSOTests(6,2)
+RunSUTests(5,2)
+RunSUTests(6,2)
