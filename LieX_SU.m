@@ -1,26 +1,20 @@
-function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
+function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
     % Takes inputs alpha (a root), root_system the root system it 
     % comes from, and u (a vector, possibly symbolic)
     % Output the associated element of the Lie algebra
 
     n = MatrixSize;
     q = Root_System.Rank;
+    H = NIForm.Matrix;
+    eps = NIForm.Epsilon;
+    P = NIForm.PrimitiveElement;
 
     % validate inputs - alpha is a root, and u is the right length
     assert(Root_System.IsRoot(alpha))
     assert(length(u) == RootSpaceDimensionSU(n,Root_System,alpha))
 
-    % assume all entries of u are "real"
-    if isa(u,'sym')
-        for k=1:length(u)
-            warning('off','all')
-            assumeAlso(u(k),'real')
-            warning('on','all')
-        end
-    end
-
     % create a nxn matrix of zeros, that allows symbolic
-    mat = SymbolicZeros(n);
+    mat = QuadraticExtensionElement.zeros(n,P);
     
     if IsLong(alpha)
         % In this case, the root alpha is of the form 
@@ -31,16 +25,16 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
         % (a single element of the base field k)
         assert(RootSpaceDimensionSU(n,Root_System,alpha)==1)
         assert(length(u)==1);
-        if isa(u,'sym')
-            assumeAlso(u(k),'real')
-        end
+
+        % Convert u to a QuadraticExtensionElement type
+        u_quad = QuadraticExtensionElement(u,0,P);
         
         if sum(alpha) == 2
             % alpha = 2alpha_i
-            mat(i,i+q) = u*1i;
+            mat(i,i+q) = u_quad;
         elseif sum(alpha) == -2
             % alpha = -2alpha_i
-            mat(i+q,i) = u*1i;
+            mat(i+q,i) = u_quad;
         else
             % something is wrong, throw an error
             printf("A long root has the wrong form.");
@@ -61,7 +55,7 @@ function mat = LieX_SU(MatrixSize, Root_System, FormMatrix, alpha, u)
         c = sym(zeros(1,n-2*q));
         for j=1:n-2*q
             u_complex(j) = u(2*j-1) + 1i*u(2*j);
-            c(j) = FormMatrix(2*q+j,2*q+j);
+            c(j) = H(2*q+j,2*q+j);
         end
         
         if sum(alpha) == 1

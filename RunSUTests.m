@@ -1,28 +1,54 @@
-function RunSUTests(n,q)
+function RunSUTests(n,q,eps)
 
     % Use the PinnedGroup class to verify a pinning of SU_{n,q}
 
-    NameString = strcat('special unitary group of size',{' '},num2str(n),{' '},'with Witt index',{' '},num2str(q));
     MatrixSize = n;
     RootSystemRank = q;
+    syms d;
+    PrimitiveElement = sqrt(d);
+
+    if eps == 1
+        NameString = strcat('special unitary group of size',{' '},num2str(n),...
+            {' associated to a hermitian form with Witt index '},num2str(q));
+    elseif eps == -1
+        NameString = strcat('special unitary group of size',{' '},num2str(n),...
+            {' associated to a skew-hermitian form with Witt index '},num2str(q));
+    end
 
     % Setting up the root system
     if n==2*q
-        % Use the C_q root system
+        % Quasisplit case, use C_q root system
         Type = 'C';
     else
-        % Use the BC_q root system
+        % Non-quasisplit case, use BC_q root system
         Type = 'BC';
     end
     root_system = RootSystem(Type,RootSystemRank,MatrixSize);
 
-    % Building the FormMatrix
-    if n-2*q > 0
+    % Building the matrix of the (skew-)hermitian form
+    if n > 2*q
         vec_C = sym('c',[1,n-2*q]);
-        FormMatrix = GetH(n,q,vec_C);
+        if eps == 1
+            % In the hermitian case, entries of C must be "purely real"
+            for i=1:n-2*q
+                vec_C(i) = QuadraticExtensionElement(vec_C(i),0,PrimitiveElement);
+            end
+        elseif eps == -1
+            % In the skew-hermitian case, entries of C must be "purely imaginary"
+            for i=1:n-2*q
+                vec_C(i) = QuadraticExtensionElement(0,vec_C(i),PrimitiveElement);
+            end
+        end
     else
-        FormMatrix = GetH(n,q,[]);
+        vec_C = [];
     end
+    if eps == 1
+        label = 'hermitian';
+    elseif eps == -1
+        label = 'skew-hermitian';
+    end
+    Form = NIForm(n,q,eps,vec_C,PrimitiveElement,label);
+    Form.Matrix % Remove later, for debugging
 
     RootSpaceDimension = @RootSpaceDimensionSU;
     RootSpaceMap = @LieX_SU;
@@ -35,7 +61,7 @@ function RunSUTests(n,q)
     CommutatorCoefficientMap = @CommutatorCoefficientSU;
     WeylGroupCoefficientMap = @WeylGroupConjugationCoefficientSU;
 
-    SU_n_q = PinnedGroup(NameString,MatrixSize,root_system,FormMatrix,...
+    SU_n_q = PinnedGroup(NameString,MatrixSize,root_system,Form,...
         RootSpaceDimension,RootSpaceMap,RootSubgroupMap,WeylGroupMap,GenericTorusElementMap,...
         IsGroupElement,IsTorusElement,IsLieAlgebraElement,...
         CommutatorCoefficientMap,WeylGroupCoefficientMap);
@@ -63,15 +89,23 @@ function bool = IsTorusElementSU(MatrixSize, RootSystemRank, MatrixToTest)
         bool = bool && (MatrixToTest(i,i) == 1);
     end
 end
-function bool = IsIn_little_su(MatrixSize,MatrixToTest,FormMatrix)
+function bool = IsIn_little_su(MatrixSize,MatrixToTest,Form)
+    zero_quad = QuadraticExtensionElement(0,0,Form.PrimitiveElement);
+
+    % Compute trace of the matrix
+    my_trace = zero_quad;
+    for i=1:MatrixSize
+        my_trace = my_trace + MatrixToTest(i,i);
+    end
+
     bool = (length(MatrixToTest)==MatrixSize && ...
-        trace(MatrixToTest)==0 && ...
-        SymbolicIsEqual(ctranspose(MatrixToTest)*FormMatrix,-FormMatrix*MatrixToTest));
+        eq(my_trace,zero_quad) && ...
+        SymbolicIsEqual(transpose(conj(MatrixToTest))*Form.Matrix,-Form.Matrix*MatrixToTest));
 end
-function bool = IsInSU(MatrixSize,MatrixToTest,FormMatrix)
+function bool = IsInSU(MatrixSize,MatrixToTest,Form)
     bool = (length(MatrixToTest)==MatrixSize && ...
         det(MatrixToTest) == 1 && ...
-        SymbolicIsEqual(ctranspose(MatrixToTest)*FormMatrix*MatrixToTest,FormMatrix));
+        SymbolicIsEqual(ctranspose(MatrixToTest)*Form.Matrix*MatrixToTest,Form.Matrix));
 end
 function mat = GenericTorusElementSU(MatrixSize, RootSystemRank, DiagonalValues)
     % given a vector [t_1, t_2, t_3, ... t_q] of length q = RootSystemRank
