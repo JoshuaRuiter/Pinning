@@ -49,9 +49,9 @@ classdef NIForm
             %       diag(AnisotropicPartVector) in the (3,3) block
             % Create a matrix of zeros of the right size
             if strcmpi(NameString,'hermitian') || strcmpi(NameString,'skew-hermitian')
-                obj.Matrix = QuadraticExtensionElement.zeros(n,PrimitiveElement);
-                one_quad = QuadraticExtensionElement(1,0,PrimitiveElement);
-                eps_quad = QuadraticExtensionElement(eps,0,PrimitiveElement);
+                obj.Matrix = QuadMat.zeros(n,PrimitiveElement);
+%                 one_quad = QuadraticExtensionElement(1,0,PrimitiveElement);
+%                 eps_quad = QuadraticExtensionElement(eps,0,PrimitiveElement);
 
                 % C must satisfy vec_C = eps*conj(vec_C)
                 for i=1:n-2*q
