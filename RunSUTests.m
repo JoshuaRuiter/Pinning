@@ -4,10 +4,16 @@ function RunSUTests(n,q,eps)
 
     MatrixSize = n;
     RootSystemRank = q;
-%     syms d;
-%     PrimitiveElement = sqrt(d);
+    % syms d;
+    % PrimitiveElement = sqrt(d);
     syms P;
     PrimitiveElement = P;
+
+    if eps == 1
+        P_eps = P;
+    else % eps == -1
+        P_eps = 1;
+    end
 
     if eps == 1
         NameString = strcat('special unitary group of size',{' '},num2str(n),...
@@ -30,16 +36,11 @@ function RunSUTests(n,q,eps)
     % Building the matrix of the (skew-)hermitian form
     if n > 2*q
         vec_C = sym('c',[1,n-2*q]);
-        if eps == 1
-            % In the hermitian case, entries of C must be "purely real"
-            for i=1:n-2*q
-                vec_C(i) = QuadraticExtensionElement(vec_C(i),0,PrimitiveElement);
-            end
-        elseif eps == -1
-            % In the skew-hermitian case, entries of C must be "purely imaginary"
-            for i=1:n-2*q
-                vec_C(i) = QuadraticExtensionElement(0,vec_C(i),PrimitiveElement);
-            end
+
+        % In the hermitian case, entries of C must be "purely real"
+        % In the skew-hermitian case, entries of C must be "purely imaginary"
+        if eps == -1
+            vec_C = vec_C*P;
         end
     else
         vec_C = [];
@@ -50,7 +51,6 @@ function RunSUTests(n,q,eps)
         label = 'skew-hermitian';
     end
     Form = NIForm(n,q,eps,vec_C,PrimitiveElement,label);
-    Form.Matrix % Remove later, for debugging
 
     RootSpaceDimension = @RootSpaceDimensionSU;
     RootSpaceMap = @LieX_SU;
@@ -92,23 +92,18 @@ function bool = IsTorusElementSU(MatrixSize, RootSystemRank, MatrixToTest)
     end
 end
 function bool = IsIn_little_su(MatrixSize,MatrixToTest,Form)
-
-    conjugated_matrix = conjugate_matrix(MatrixToTest,Form.PrimitiveElement);
+    conjugated_matrix = conjugate(MatrixToTest,Form.PrimitiveElement);
     conj_transpose = transpose(conjugated_matrix);
-
-    Form.Matrix
-    conj_transpose
-    conj_transpose*Form.Matrix
-    -Form.Matrix*MatrixToTest
-
     bool = (length(MatrixToTest)==MatrixSize && ...
         trace(MatrixToTest)==0 && ...
         isequal(conj_transpose*Form.Matrix,-Form.Matrix*MatrixToTest));
 end
 function bool = IsInSU(MatrixSize,MatrixToTest,Form)
+    conjugated_matrix = conjugate(MatrixToTest,Form.PrimitiveElement);
+    conj_transpose = transpose(conjugated_matrix);
     bool = (length(MatrixToTest)==MatrixSize && ...
         det(MatrixToTest) == 1 && ...
-        SymbolicIsEqual(ctranspose(MatrixToTest)*Form.Matrix*MatrixToTest,Form.Matrix));
+        SymbolicIsEqual(conj_transpose*Form.Matrix*MatrixToTest,Form.Matrix));
 end
 function mat = GenericTorusElementSU(MatrixSize, RootSystemRank, DiagonalValues)
     % given a vector [t_1, t_2, t_3, ... t_q] of length q = RootSystemRank
@@ -133,27 +128,4 @@ function mat = GenericTorusElementSU(MatrixSize, RootSystemRank, DiagonalValues)
         mat(i,i) = 1;
     end
 end
-function conjugated_element = conjugate_element(myElement, PrimitiveElement)
-    % Compute a conjugate of a quadratic extension element
-    syms x;
-    syms y;
-    eq = (x+y*PrimitiveElement == myElement);
-    real_sol = solve(eq,x);
-    PrimitiveElement = 0;
-    real_part = subs(real_sol);
-    conjugated_element = real_part - (myElement - real_part);
-end
-function conjugated_matrix = conjugate_matrix(myMatrix, PrimitiveElement)
-    % Compute a conjugate of a matrix with respect to a PrimitiveElement
-    assert(isa(PrimitiveElement,'sym'));
-    conjugated_matrix = myMatrix;
-    mat_size = size(myMatrix);
-    rows = mat_size(1);
-    cols = mat_size(2);
-    for i=1:rows
-        for j = 1:cols
-            conjugated_matrix(i,j) = conjugate_element(myMatrix(i,j), PrimitiveElement);
-        end
-    end
 
-end

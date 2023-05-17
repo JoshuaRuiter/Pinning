@@ -37,21 +37,18 @@ classdef NIForm
                     strcmpi(NameString,'symmetric bilinear'));
 
             if strcmpi(NameString,'symmetric bilinear')
-                assert(eps == 1);
-            else
-                % (Skew)-hermitian case
+                assert(eps == 1)
+            elseif not(isempty(vec_C))
+                % (Skew)-hermitian, non-quasisplit case
                 % C must satisfy vec_C = eps*conj(vec_C)
-                for i=1:n-2*q
-                    % INCOMPLETE
-                    assert(true)
-                    %assert(eq(vec_C(i),eps_quad*conj(vec_C(i))));
-                end
+                assert(isequal(conjugate(vec_C,PrimitiveElement),eps*vec_C))
             end
 
             obj.Dimension = n;
             obj.Index = q;
             obj.Epsilon = eps;
             obj.AnisotropicPartVector = vec_C;
+            obj.AnisotropicMatrix = diag(vec_C);
             obj.PrimitiveElement = PrimitiveElement;
             obj.NameString = NameString;
 
@@ -61,6 +58,7 @@ classdef NIForm
             %       (q x q) Epsilon*identity in the (2,1) block
             %       diag(AnisotropicPartVector) in the (3,3) block
             % Create a matrix of zeros of the right size
+            obj.Matrix = sym(zeros(n));
             for i=1:q
                 % this makes the (q x q) identity block in the (1,2) block
                 obj.Matrix(i,q+i) = 1;

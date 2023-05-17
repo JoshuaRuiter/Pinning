@@ -9,7 +9,7 @@ function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
     C = NIForm.AnisotropicMatrix;
     eps = NIForm.Epsilon;
     P = NIForm.PrimitiveElement;
-
+    
     if eps == 1
         P_eps = P;
     else % eps == -1
@@ -19,7 +19,6 @@ function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
     % validate inputs - alpha is a root, and u is the right length
     assert(Root_System.IsRoot(alpha))
     assert(length(u) == RootSpaceDimensionSU(n,Root_System,alpha))
-    assert(length(C) == n-2*q)
 
     % create a nxn matrix of zeros, that allows symbolic
     mat = sym(zeros(n));
@@ -64,15 +63,15 @@ function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
         if sum(alpha) == 1
             % alpha = alpha_i
             for j=1:n-2*q
-                mat(2*q+j,q+i) = u_complex(j);
-                mat(i,2*q+j) = -eps*C(j,j)*conjugate(u_complex(j),P);
+                mat(2*q+i,q+i) = u_complex(j);
+                mat(i,2*q+j) = -eps*C(j,j)*conjugate(u_complex(j));
             end
 
         elseif sum(alpha) == -1
             % alpha = -alpha_i
             for j=1:n-2*q
                 mat(2*q+j,i) = u_complex(j);
-                mat(q+i,2*q+j) = -eps*C(j,j)*conjugate(u_complex(j),P);
+                mat(q+i,2*q+j) = -eps*C
             end
 
         else
@@ -80,6 +79,27 @@ function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
             printf("A short root has the wrong form.");
             assert(false);
         end
+        
+%         if sum(alpha) == 1
+%             % alpha = alpha_i
+%             for j = (2*q)+1 : n
+% 
+%                 mat(i,j) = C(j-2*q,j-2*q)*u_complex(j-2*q);
+%                 mat(j,q+i) = -conjugate(u_complex(j-2*q));
+% 
+%             end
+%         elseif sum(alpha) == -1
+%             % alpha = -alpha_i
+%             for j = (2*q)+1 : n
+% 
+%                 mat(q+i,j) = -C(j-2*q,j-2*q)*u_complex(j-2*q);
+%                 mat(j,i) = conjugate(u_complex(j-2*q));
+%             end
+%         else
+%             % something is wrong, throw an error
+%             printf("A short root has the wrong form.");
+%             assert(false);
+%         end
 
     elseif IsMedium(alpha)
 
@@ -88,6 +108,18 @@ function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
         % and the "imaginary" part in the second entry
         assert(length(u)==2);
         
+%         warning('off','all')
+%         if isa(u(1),'sym')
+%             assumeAlso(u(1),'real')
+%         end
+%         if isa(u(2),'sym')
+%             assumeAlso(u(2),'real')
+%         end
+%         warning('on','all')
+% 
+%         % switch to viewing u as a single complex number
+%         u_complex = u(1) + 1i*u(2);
+
         % switch to viewing u as a single quadratic extension element
         % P is the primitive element
         u_complex = u(1) + u(2)*P;
@@ -140,7 +172,7 @@ function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
         assert(false);
     end
 
-    assert(isequal(size(mat),[n,n]));
+    assert(length(mat)==MatrixSize);
 end
 
 function bool = IsShort(alpha)

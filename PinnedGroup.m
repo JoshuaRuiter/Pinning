@@ -64,20 +64,20 @@ classdef PinnedGroup
             fprintf("\n\tChecking basic properties...");
             fprintf("\n\t\tChecking root spaces belong to Lie algebra...")
             for i=1:length(obj.RootList)
-                alpha = obj.RootList{i}
-                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha)
-                u = sym('u',[dim_V_alpha,1])
-                LieX_alpha_u = obj.RootSpaceMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u)
+                alpha = obj.RootList{i};
+                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
+                u = sym('u',[dim_V_alpha,1]);
+                LieX_alpha_u = obj.RootSpaceMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u);
                 assert(obj.IsLieAlgebraElement(obj.MatrixSize,LieX_alpha_u,obj.Form))
             end
             fprintf("passed.")
         
             fprintf("\n\t\tChecking root subgroups belong to the group...")
             for i=1:length(obj.RootList)
-                alpha = obj.RootList{i}
-                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha)
-                u = sym('u',[dim_V_alpha,1])
-                X_alpha_u = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u)
+                alpha = obj.RootList{i};
+                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
+                u = sym('u',[dim_V_alpha,1]);
+                X_alpha_u = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u);
                 assert(obj.IsGroupElement(obj.MatrixSize,X_alpha_u,obj.Form));
             end
             fprintf("passed.")
