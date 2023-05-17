@@ -4,8 +4,10 @@ function RunSUTests(n,q,eps)
 
     MatrixSize = n;
     RootSystemRank = q;
-    syms d;
-    PrimitiveElement = sqrt(d);
+%     syms d;
+%     PrimitiveElement = sqrt(d);
+    syms P;
+    PrimitiveElement = P;
 
     if eps == 1
         NameString = strcat('special unitary group of size',{' '},num2str(n),...
@@ -90,17 +92,18 @@ function bool = IsTorusElementSU(MatrixSize, RootSystemRank, MatrixToTest)
     end
 end
 function bool = IsIn_little_su(MatrixSize,MatrixToTest,Form)
-    zero_quad = QuadraticExtensionElement(0,0,Form.PrimitiveElement);
 
-    % Compute trace of the matrix
-    my_trace = zero_quad;
-    for i=1:MatrixSize
-        my_trace = my_trace + MatrixToTest(i,i);
-    end
+    conjugated_matrix = conjugate_matrix(MatrixToTest,Form.PrimitiveElement);
+    conj_transpose = transpose(conjugated_matrix);
+
+    Form.Matrix
+    conj_transpose
+    conj_transpose*Form.Matrix
+    -Form.Matrix*MatrixToTest
 
     bool = (length(MatrixToTest)==MatrixSize && ...
-        eq(my_trace,zero_quad) && ...
-        SymbolicIsEqual(transpose(conj(MatrixToTest))*Form.Matrix,-Form.Matrix*MatrixToTest));
+        trace(MatrixToTest)==0 && ...
+        isequal(conj_transpose*Form.Matrix,-Form.Matrix*MatrixToTest));
 end
 function bool = IsInSU(MatrixSize,MatrixToTest,Form)
     bool = (length(MatrixToTest)==MatrixSize && ...
@@ -130,4 +133,27 @@ function mat = GenericTorusElementSU(MatrixSize, RootSystemRank, DiagonalValues)
         mat(i,i) = 1;
     end
 end
+function conjugated_element = conjugate_element(myElement, PrimitiveElement)
+    % Compute a conjugate of a quadratic extension element
+    syms x;
+    syms y;
+    eq = (x+y*PrimitiveElement == myElement);
+    real_sol = solve(eq,x);
+    PrimitiveElement = 0;
+    real_part = subs(real_sol);
+    conjugated_element = real_part - (myElement - real_part);
+end
+function conjugated_matrix = conjugate_matrix(myMatrix, PrimitiveElement)
+    % Compute a conjugate of a matrix with respect to a PrimitiveElement
+    assert(isa(PrimitiveElement,'sym'));
+    conjugated_matrix = myMatrix;
+    mat_size = size(myMatrix);
+    rows = mat_size(1);
+    cols = mat_size(2);
+    for i=1:rows
+        for j = 1:cols
+            conjugated_matrix(i,j) = conjugate_element(myMatrix(i,j), PrimitiveElement);
+        end
+    end
 
+end

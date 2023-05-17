@@ -8,13 +8,19 @@ function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
     H = NIForm.Matrix;
     eps = NIForm.Epsilon;
     P = NIForm.PrimitiveElement;
+    
+    if eps == 1
+        P_eps = P;
+    else % eps == -1
+        P_eps = 1;
+    end
 
     % validate inputs - alpha is a root, and u is the right length
     assert(Root_System.IsRoot(alpha))
     assert(length(u) == RootSpaceDimensionSU(n,Root_System,alpha))
 
     % create a nxn matrix of zeros, that allows symbolic
-    mat = QuadraticExtensionElement.zeros(n,P);
+    mat = sym(zeros(n));
     
     if IsLong(alpha)
         % In this case, the root alpha is of the form 
@@ -25,16 +31,13 @@ function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
         % (a single element of the base field k)
         assert(RootSpaceDimensionSU(n,Root_System,alpha)==1)
         assert(length(u)==1);
-
-        % Convert u to a QuadraticExtensionElement type
-        u_quad = QuadraticExtensionElement(u,0,P);
         
         if sum(alpha) == 2
             % alpha = 2alpha_i
-            mat(i,i+q) = u_quad;
+            mat(i,i+q) = u*P_eps;
         elseif sum(alpha) == -2
             % alpha = -2alpha_i
-            mat(i+q,i) = u_quad;
+            mat(i+q,i) = u*P_eps;
         else
             % something is wrong, throw an error
             printf("A long root has the wrong form.");

@@ -15,6 +15,7 @@ classdef NIForm
         AnisotropicMatrix % often called C
         PrimitiveElement 
             % Primitive element of associated quadratic extension
+            % Should be a symbolic variable, or perhaps the imaginary unit 1i
             % Only relevant for hermitian and skew-hermitian forms
     end
 
@@ -35,6 +36,18 @@ classdef NIForm
                     strcmpi(NameString,'skew-hermitian') || ...
                     strcmpi(NameString,'symmetric bilinear'));
 
+            if strcmpi(NameString,'symmetric bilinear')
+                assert(eps == 1);
+            else
+                % (Skew)-hermitian case
+                % C must satisfy vec_C = eps*conj(vec_C)
+                for i=1:n-2*q
+                    % INCOMPLETE
+                    assert(true)
+                    %assert(eq(vec_C(i),eps_quad*conj(vec_C(i))));
+                end
+            end
+
             obj.Dimension = n;
             obj.Index = q;
             obj.Epsilon = eps;
@@ -48,55 +61,21 @@ classdef NIForm
             %       (q x q) Epsilon*identity in the (2,1) block
             %       diag(AnisotropicPartVector) in the (3,3) block
             % Create a matrix of zeros of the right size
-            if strcmpi(NameString,'hermitian') || strcmpi(NameString,'skew-hermitian')
-                obj.Matrix = QuadMat.zeros(n,PrimitiveElement);
-%                 one_quad = QuadraticExtensionElement(1,0,PrimitiveElement);
-%                 eps_quad = QuadraticExtensionElement(eps,0,PrimitiveElement);
-
-                % C must satisfy vec_C = eps*conj(vec_C)
-                for i=1:n-2*q
-                    assert(eq(vec_C(i),eps_quad*conj(vec_C(i))));
-                end
-                
-                % create the two identity blocks
-                for i=1:q
-                    % this makes the (q x q) identity block in the (1,2) block
-                    obj.Matrix(i,q+i) = one_quad;
-            
-                    % this makes the (q x q) Epsilon*identity block in the (2,1) block
-                    obj.Matrix(q+i,i) = eps_quad;
-                end
-            
-                % this creates the diag(vec_C) block in the (3,3) block
-                if n > 2*q
-                    for i=1:n-2*q
-                        obj.Matrix(2*q+i,2*q+i) = vec_C(i);
-                    end
-                end
-
-            elseif strcmpi(NameString,'symmetric bilinear')
-                obj.Matrix = sym(zeros(n));
-                
-                % create the two identity blocks
-                for i=1:q
-                    % this makes the (q x q) identity block in the (1,2) block
-                    obj.Matrix(i,q+i) = 1;
-            
-                    % this makes the (q x q) Epsilon*identity block in the (2,1) block
-                    obj.Matrix(q+i,i) = eps;
-                end
-            
-                % this creates the diag(vec_C) block in the (3,3) block
-                if n > 2*q
-                    for i=1:n-2*q
-                        obj.Matrix(2*q+i,2*q+i) = vec_C(i);
-                    end
-                end
-
-            else
-                assert(false,['The label for a nondegenerate isotropic form is invalid. '...
-                    'Valid labels are hermitian, skew-hermitian, and symmetric bilinear.'])
+            for i=1:q
+                % this makes the (q x q) identity block in the (1,2) block
+                obj.Matrix(i,q+i) = 1;
+        
+                % this makes the (q x q) Epsilon*identity block in the (2,1) block
+                obj.Matrix(q+i,i) = eps;
             end
+        
+            % this creates the diag(vec_C) block in the (3,3) block
+            if n > 2*q
+                for i=1:n-2*q
+                    obj.Matrix(2*q+i,2*q+i) = vec_C(i);
+                end
+            end
+
         end
 
         function bool = IsSymmetric(obj)

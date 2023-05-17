@@ -57,8 +57,8 @@ classdef Quad
                     && isequal(a.Imag,b.Imag));
         end
 
-        function num = ComplexForm(a)
-            num = a.Real + a.Imag*a.PrimitiveElement;
+        function num = ComplexForm(obj)
+            num = obj.Real + obj.Imag*obj.PrimitiveElement;
         end
 
     end
