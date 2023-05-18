@@ -74,16 +74,24 @@ classdef NIForm
                 end
             end
 
+            if strcmpi(NameString,'hermitian')
+                assert(obj.IsHermitian());
+            elseif strcmpi(NameString,'skew-hermitian')
+                assert(obj.IsSkewHermitian());
+            elseif strcmpi(NameString,'symmetric bilinear')
+                assert(obj.IsSymmetric());
+            end
+
         end
 
         function bool = IsSymmetric(obj)
             bool = isequal(obj.Matrix,transpose(obj.Matrix));
         end
         function bool = IsHermitian(obj)
-            bool = isequal(obj.Matrix,ctranspose(obj.Matrix));
+            bool = isequal(obj.Matrix,transpose(conjugate(obj.Matrix,obj.PrimitiveElement)));
         end
         function bool = IsSkewHermitian(obj)
-            bool = isequal(obj.Matrix,-ctranspose(obj.Matrix));
+            bool = isequal(obj.Matrix,-transpose(conjugate(obj.Matrix,obj.PrimitiveElement)));
         end
 
     end

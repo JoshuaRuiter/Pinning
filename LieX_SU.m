@@ -72,7 +72,7 @@ function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
             % alpha = -alpha_i
             for j=1:n-2*q
                 mat(2*q+j,i) = u_complex(j);
-                mat(q+i,2*q+j) = -eps*C(j,j)*conjugate(u_complex(j),P);
+                mat(q+i,2*q+j) = -C(j,j)*conjugate(u_complex(j),P);
             end
 
         else

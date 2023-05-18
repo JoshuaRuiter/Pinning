@@ -3,7 +3,7 @@
 
 % % Root system tests
 % % All of these pass
-% upperBound = 6; % Increase this to run tests on higher rank root systems
+% upperBound = 10; % Increase this to run tests on higher rank root systems
 % for n=2:upperBound
 %     A_n = RootSystem('A',n);
 %     A_n.VerifyProperties();
@@ -47,8 +47,6 @@
 
 % Special unitary group tests
 % Quasisplit special unitary groups (n=2q)
-
-% These have passed basic tests
 RunSUTests(4,2,1)
 RunSUTests(4,2,-1)
 RunSUTests(6,3,1)
@@ -57,7 +55,6 @@ RunSUTests(8,4,1)
 RunSUTests(8,4,-1)
 RunSUTests(10,5,1)
 RunSUTests(10,5,-1)
-
 % Non-quasisplit special unitary groups (n>2q)
 RunSUTests(5,2,1)
 RunSUTests(5,2,-1)

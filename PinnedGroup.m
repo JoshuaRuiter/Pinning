@@ -53,7 +53,8 @@ classdef PinnedGroup
         function RunTests(obj)
             fprintf("Running tests to verify a pinning of the " + obj.NameString + "...\n")
             TestBasics(obj);
-%             TestRootSubgroupMapsAreHomomorphisms(obj);
+            TestRootSpaceMapsAreHomomorphisms(obj);
+            TestRootSubgroupMapsAreHomomorphisms(obj);
 %             TestTorusConjugationFormula(obj);
 %             TestCommutatorFormula(obj);
 %             TestWeylGroupElements(obj);
@@ -84,12 +85,32 @@ classdef PinnedGroup
         
             fprintf("\n\tBasic tests passed.\n")
         end
+        function TestRootSpaceMapsAreHomomorphisms(obj)
+            % Run tests to confirm that RootSpaceMap is a homomorphism
+            % That is, RootSpaceMap(alpha,u+v) =
+            % RootSpaceMap(alpha,u)+RootSubgroupMap(alpha,v)
+            % for symbolic variables u and v
+
+            fprintf("\n\tChecking root space maps are homomorphisms...");
+            for i=1:length(obj.RootList)
+                alpha = obj.RootList{i};
+                dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
+                u = sym('u',[dim_V_alpha,1]);
+                v = sym('v',[dim_V_alpha,1]);
+                L_alpha_u = obj.RootSpaceMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u);
+                L_alpha_v = obj.RootSpaceMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,v);
+                product = L_alpha_u+L_alpha_v;
+                L_alpha_u_plus_v = obj.RootSpaceMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u+v);
+                assert(SymbolicIsEqual(product,L_alpha_u_plus_v));
+            end
+            fprintf("passed.")
+        end
         function TestRootSubgroupMapsAreHomomorphisms(obj)
             % Run tests to confirm that RootSubgroupMap is a homomorphism
             % That is, RootSubgroupMap(alpha,u+v) =
             % RootSubgroupMap(alpha,u)*RootSubgroupMap(alpha,v)
             % for symbolic variables u and v
-        
+
             fprintf("\n\tChecking root subgroup maps are homomorphisms...");
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};

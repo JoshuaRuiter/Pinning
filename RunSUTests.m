@@ -15,12 +15,19 @@ function RunSUTests(n,q,eps)
         P_eps = 1;
     end
 
+
     if eps == 1
-        NameString = strcat('special unitary group of size',{' '},num2str(n),...
+        NameString = strcat('special unitary group \nof size',{' '},num2str(n),...
             {' associated to a hermitian form with Witt index '},num2str(q));
     elseif eps == -1
-        NameString = strcat('special unitary group of size',{' '},num2str(n),...
+        NameString = strcat('special unitary group \nof size',{' '},num2str(n),...
             {' associated to a skew-hermitian form with Witt index '},num2str(q));
+    end
+
+    if n==2*q
+        NameString = strcat('quasisplit',{' '},NameString);
+    elseif n > 2*q
+        NameString = strcat('non-quasisplit',{' '},NameString);
     end
 
     % Setting up the root system
