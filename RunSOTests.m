@@ -24,13 +24,14 @@ function RunSOTests(n,q)
     IsGroupElement = @IsInSO;
     IsTorusElement = @IsTorusElementSO;
     IsLieAlgebraElement = @IsIn_little_so;
+    HomDefectCoefficientSO = @HomDefectCoefficientSO;
     CommutatorCoefficientMap = @CommutatorCoefficientSO;
     WeylGroupCoefficientMap = @WeylGroupConjugationCoefficientSO;
 
     SO_n_q = PinnedGroup(NameString,MatrixSize,Root_System,Form,...
         RootSpaceDimension,RootSpaceMap,RootSubgroupMap,WeylGroupMap,GenericTorusElementMap,...
         IsGroupElement,IsTorusElement,IsLieAlgebraElement,...
-        CommutatorCoefficientMap,WeylGroupCoefficientMap);
+        HomDefectCoefficientSO, CommutatorCoefficientMap,WeylGroupCoefficientMap);
 
     SO_n_q.RunTests();
 
@@ -78,4 +79,8 @@ function bool = IsTorusElementSO(MatrixSize, RootSystemRank, MatrixToTest)
         bool = bool && (MatrixToTest(i,i) == 1);
     end
         
+end
+
+function num = HomDefectCoefficientSO(MatrixSize,RootSystem,Form,u,v)  %#ok<INUSD> 
+    num = 0;
 end

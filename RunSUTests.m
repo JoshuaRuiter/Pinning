@@ -67,13 +67,15 @@ function RunSUTests(n,q,eps)
     IsGroupElement = @IsInSU;
     IsTorusElement = @IsTorusElementSU;
     IsLieAlgebraElement = @IsIn_little_su;
+    HomDefectCoefficientSU = @HomDefectCoefficientSU;
     CommutatorCoefficientMap = @CommutatorCoefficientSU;
     WeylGroupCoefficientMap = @WeylGroupConjugationCoefficientSU;
 
     SU_n_q = PinnedGroup(NameString,MatrixSize,root_system,Form,...
         RootSpaceDimension,RootSpaceMap,RootSubgroupMap,WeylGroupMap,GenericTorusElementMap,...
         IsGroupElement,IsTorusElement,IsLieAlgebraElement,...
-        CommutatorCoefficientMap,WeylGroupCoefficientMap);
+        HomDefectCoefficientSU, CommutatorCoefficientMap,...
+        WeylGroupCoefficientMap);
 
     SU_n_q.RunTests();
 

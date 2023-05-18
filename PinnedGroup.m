@@ -16,6 +16,7 @@ classdef PinnedGroup
         IsGroupElement
         IsTorusElement
         IsLieAlgebraElement
+        HomDefectCoefficientMap
         CommutatorCoefficientMap
         WeylGroupCoefficientMap
     end
@@ -27,7 +28,7 @@ classdef PinnedGroup
             Root_System, Form, RootSpaceDimension, ...
             RootSpaceMap, RootSubgroupMap, WeylGroupMap, GenericTorusElementMap, ...
             IsGroupElement, IsTorusElement, IsLieAlgebraElement, ...
-            CommutatorCoefficientMap, WeylGroupCoefficientMap)
+            HomDefectCoefficientMap, CommutatorCoefficientMap, WeylGroupCoefficientMap)
             obj.NameString = NameString;
             obj.MatrixSize = MatrixSize;
 
@@ -45,6 +46,7 @@ classdef PinnedGroup
             obj.IsGroupElement = IsGroupElement;
             obj.IsTorusElement = IsTorusElement;
             obj.IsLieAlgebraElement = IsLieAlgebraElement;
+            obj.HomDefectCoefficientMap = HomDefectCoefficientMap;
             obj.CommutatorCoefficientMap = CommutatorCoefficientMap;
             obj.WeylGroupCoefficientMap = WeylGroupCoefficientMap;
         end
@@ -54,7 +56,7 @@ classdef PinnedGroup
             fprintf("Running tests to verify a pinning of the " + obj.NameString + "...\n")
             TestBasics(obj);
             TestRootSpaceMapsAreHomomorphisms(obj);
-            TestRootSubgroupMapsAreHomomorphisms(obj);
+            TestRootSubgroupMapsAreAlmostHomomorphisms(obj);
 %             TestTorusConjugationFormula(obj);
 %             TestCommutatorFormula(obj);
 %             TestWeylGroupElements(obj);
@@ -105,13 +107,21 @@ classdef PinnedGroup
             end
             fprintf("passed.")
         end
-        function TestRootSubgroupMapsAreHomomorphisms(obj)
-            % Run tests to confirm that RootSubgroupMap is a homomorphism
-            % That is, RootSubgroupMap(alpha,u+v) =
-            % RootSubgroupMap(alpha,u)*RootSubgroupMap(alpha,v)
-            % for symbolic variables u and v
+        function TestRootSubgroupMapsAreAlmostHomomorphisms(obj)
+            % Run tests to confirm that RootSubgroupMap is almost a homomorphism
+            % That is, RootSubgroupMap(alpha,u)*RootSubgroupMap(alpha,v) =
+            % RootSubgroupMap(alpha,u+v)*RootSubgroupMap(2alpha,q_alpha(u,v))
+            % in theory this can continue if higher multiples of alpha are roots, 
+            % but that can't ever happen because of the structure of root systems.
 
-            fprintf("\n\tChecking root subgroup maps are homomorphisms...");
+            % The function q_alpha is called the "Hom(omomorphism)DefectCoefficient map"
+            % because it captures exactly how much RootSubgroupMap(alpha,-) 
+            % fails to be a homomorphism.
+
+            % Often, such as in the special linear group, q_alpha(u,v)=0 and so these
+            % are bonafide homomorphisms.
+
+            fprintf("\n\tChecking root subgroup maps are almost homomorphisms...");
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
                 dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
@@ -120,8 +130,29 @@ classdef PinnedGroup
                 X_alpha_u = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u);
                 X_alpha_v = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,v);
                 product = X_alpha_u*X_alpha_v;
+
                 X_alpha_u_plus_v = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u+v);
-                assert(SymbolicIsEqual(product,X_alpha_u_plus_v));
+                RHS = X_alpha_u_plus_v;
+                
+                % While loop version, which is a bit excessive
+%                 j=2;
+%                 while true
+%                     if not(obj.Root_System.IsRoot(j*alpha))
+%                         break;
+%                     end
+%                     q_v_w = obj.HomDefectCoefficientMap(obj.MatrixSize,obj.Root_System,obj.Form,u,v);
+%                     X_j_alpha_q_v_w = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,j*alpha,q_v_w);
+%                     RHS = RHS * X_j_alpha_q_v_w;
+%                     j = j+1;
+%                 end
+
+                if obj.Root_System.IsRoot(2*alpha)
+                    q_v_w = obj.HomDefectCoefficientMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u,v);
+                    X_j_alpha_q_v_w = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,2*alpha,q_v_w);
+                    RHS = RHS * X_j_alpha_q_v_w;
+                end
+
+                assert(SymbolicIsEqual(product,RHS));
             end
             fprintf("passed.")
         end

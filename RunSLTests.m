@@ -13,13 +13,14 @@ function RunSLTests(n)
     IsGroupElement = @IsInSL;
     IsTorusElement = @IsTorusElementSL;
     IsLieAlgebraElement = @IsIn_little_sl;
+    HomDefectCoefficientMap = @HomDefectCoefficientSL;
     CommutatorCoefficientMap = @CommutatorCoefficientSL;
     WeylGroupCoefficientMap = @WeylGroupConjugationCoefficientSL;
 
     SLn = PinnedGroup(NameString,MatrixSize,Root_System,FormMatrix,...
         RootSpaceDimension,RootSpaceMap,RootSubgroupMap,WeylGroupMap,GenericTorusElementMap,...
         IsGroupElement,IsTorusElement,IsLieAlgebraElement,...
-        CommutatorCoefficientMap,WeylGroupCoefficientMap);
+        HomDefectCoefficientMap, CommutatorCoefficientMap,WeylGroupCoefficientMap);
 
     SLn.RunTests()
 end
@@ -54,4 +55,8 @@ function myMatrix = GenericTorusElementSL(MatrixSize, RootSystemRank, vec_t)
 end
 function dim = RootSpaceDimensionSL(MatrixSize,Root_System,alpha) %#ok<INUSD> 
     dim = 1;
+end
+
+function num = HomDefectCoefficientSL(MatrixSize,RootSystem,Form,u,v)  %#ok<INUSD> 
+    num = 0;
 end
