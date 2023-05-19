@@ -26,7 +26,7 @@
 % G_2.VerifyProperties();
 % F_4 = RootSystem('F',4,4);
 % F_4.VerifyProperties();
-% 
+
 % % Special linear group tests
 % % All of these pass
 % RunSLTests(3)
@@ -39,7 +39,7 @@
 % RunSOTests(6,2)
 % RunSOTestS(8,3)
 % RunSOTestS(10,4)
-% % % Non-quasisplit special orthogonal groups (n>2q+2)
+% % Non-quasisplit special orthogonal groups (n>2q+2)
 % RunSoTests(7,2)
 % RunSOTests(8,2)
 % RunSOTests(9,3)
@@ -47,14 +47,14 @@
 
 % Special unitary group tests
 % Quasisplit special unitary groups (n=2q)
-% RunSUTests(4,2,1)
-% RunSUTests(4,2,-1)
-% RunSUTests(6,3,1)
-% RunSUTests(6,3,-1)
-% RunSUTests(8,4,1)
-% RunSUTests(8,4,-1)
-% RunSUTests(10,5,1)
-% RunSUTests(10,5,-1)
+RunSUTests(4,2,1)
+RunSUTests(4,2,-1)
+RunSUTests(6,3,1)
+RunSUTests(6,3,-1)
+RunSUTests(8,4,1)
+RunSUTests(8,4,-1)
+RunSUTests(10,5,1)
+RunSUTests(10,5,-1)
 % Non-quasisplit special unitary groups (n>2q)
 RunSUTests(5,2,1)
 RunSUTests(5,2,-1)

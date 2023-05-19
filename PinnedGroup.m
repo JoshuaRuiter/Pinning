@@ -57,8 +57,8 @@ classdef PinnedGroup
             TestBasics(obj);
             TestRootSpaceMapsAreHomomorphisms(obj);
             TestRootSubgroupMapsAreAlmostHomomorphisms(obj);
-%             TestTorusConjugationFormula(obj);
-%             TestCommutatorFormula(obj);
+            TestTorusConjugationFormula(obj);
+            TestCommutatorFormula(obj);
 %             TestWeylGroupElements(obj);
 %             TestWeylGroupConjugationFormula(obj);
             fprintf("\n\nAll tests passed.\n\n")
@@ -127,31 +127,23 @@ classdef PinnedGroup
                 dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
                 u = sym('u',[dim_V_alpha,1]);
                 v = sym('v',[dim_V_alpha,1]);
-                X_alpha_u = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u);
-                X_alpha_v = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,v);
+                X_alpha_u = obj.RootSubgroupMap(obj.MatrixSize,...
+                    obj.Root_System,obj.Form,alpha,u);
+                X_alpha_v = obj.RootSubgroupMap(obj.MatrixSize,...
+                    obj.Root_System,obj.Form,alpha,v);
                 product = X_alpha_u*X_alpha_v;
 
-                X_alpha_u_plus_v = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u+v);
+                X_alpha_u_plus_v = obj.RootSubgroupMap(obj.MatrixSize,...
+                    obj.Root_System,obj.Form,alpha,u+v);
                 RHS = X_alpha_u_plus_v;
                 
-                % While loop version, which is a bit excessive
-%                 j=2;
-%                 while true
-%                     if not(obj.Root_System.IsRoot(j*alpha))
-%                         break;
-%                     end
-%                     q_v_w = obj.HomDefectCoefficientMap(obj.MatrixSize,obj.Root_System,obj.Form,u,v);
-%                     X_j_alpha_q_v_w = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,j*alpha,q_v_w);
-%                     RHS = RHS * X_j_alpha_q_v_w;
-%                     j = j+1;
-%                 end
-
                 if obj.Root_System.IsRoot(2*alpha)
-                    q_v_w = obj.HomDefectCoefficientMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,u,v);
-                    X_j_alpha_q_v_w = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,2*alpha,q_v_w);
-                    RHS = RHS * X_j_alpha_q_v_w;
+                    q_uv = obj.HomDefectCoefficientMap(obj.MatrixSize,...
+                        obj.Root_System,obj.Form,alpha,u,v);
+                    X_2alpha_quv = obj.RootSubgroupMap(obj.MatrixSize,...
+                        obj.Root_System,obj.Form,2*alpha,q_uv);
+                    RHS = RHS * X_2alpha_quv;
                 end
-
                 assert(SymbolicIsEqual(product,RHS));
             end
             fprintf("passed.")
@@ -207,9 +199,14 @@ classdef PinnedGroup
                             p = combos{k}{2};
                             q = combos{k}{3};
                             assert(isequal(root,p*alpha+q*beta))
-                            N = obj.CommutatorCoefficientMap(obj.MatrixSize,obj.Root_System,alpha,beta,p,q,u,v);
+                            N = obj.CommutatorCoefficientMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha,beta,p,q,u,v);
                             RHS = RHS * obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,p*alpha+q*beta,N);
                         end
+
+                        alpha
+                        beta
+                        LHS
+                        RHS
         
                         assert(SymbolicIsEqual(LHS,RHS));
                     end

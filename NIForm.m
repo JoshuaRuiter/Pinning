@@ -94,6 +94,16 @@ classdef NIForm
             bool = isequal(obj.Matrix,-transpose(conjugate(obj.Matrix,obj.PrimitiveElement)));
         end
 
+        function val = evaluate(obj,u,v)
+            % Evaluate the form on two row vectors
+            val = u*obj.Matrix*transpose(v);
+        end
+
+        function val = evaluateAnisotropicPart(obj,u,v)
+            % Evaluate the related anisotropic form on two row vectors
+            val = u*obj.AnisotropicMatrix*transpose(v);
+        end
+
     end
 
 end

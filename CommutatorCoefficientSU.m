@@ -1,4 +1,4 @@
-function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
+function N = CommutatorCoefficientSU(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v)
     % Compute the commutator coefficient N_{ij}^{alpha beta}(u,v)
     % for the group SU_{n,q}(L,h)
     % That is, N_{ij}^{alpha beta}(u,v) is the input to
@@ -7,6 +7,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
 
     n = MatrixSize;
     q = Root_System.Rank;
+    P = Form.PrimitiveElement;
 
     % Validating inputs
     assert(i>=1);
@@ -64,7 +65,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
             assert(j==1)
             assert(IsMedium(alpha+beta) || IsLong(alpha+beta))
             assert(length(combos)==1)
-            N = Commutator_Coefficient_Medium_Medium_Quasisplit(Root_System,alpha,beta,i,j,u,v);
+            N = Commutator_Coefficient_Medium_Medium_Quasisplit(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v);
 
         elseif IsMedium(alpha) && IsLong(beta)
             % alpha and beta are different lengths, and their sum is a root
@@ -73,7 +74,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
             assert(IsMedium(alpha+beta))
             assert(Root_System.IsRoot(2*alpha+beta))
             assert(length(combos)==2)
-            N = Commutator_Coefficient_Medium_Long_Quasisplit(Root_System,alpha,beta,i,j,u,v);
+            N = Commutator_Coefficient_Medium_Long_Quasisplit(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v);
 
         elseif IsLong(alpha) && IsMedium(beta)
             % alpha and beta are different lengths, and their sum is a root
@@ -88,7 +89,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
             % In this case, just reverse the roles of alpha and beta
             % which also reverses the roles of i and j, and u and v
             % and makes the coefficient negative
-            N = -Commutator_Coefficient_Medium_Long_Quasisplit(Root_System,beta,alpha,j,i,v,u);
+            N = -Commutator_Coefficient_Medium_Long_Quasisplit(MatrixSize,Root_System,Form,beta,alpha,j,i,v,u);
 
         else
             % This should be impossible
@@ -130,7 +131,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
             % N = Commutator_Coefficient_Quasisplit_Two_Medium(alpha,beta,i,j,u,v);
 
             % Otherwise, use
-            N = Commutator_Coefficient_Medium_Medium(Root_System,alpha,beta,i,j,u,v);
+            N = Commutator_Coefficient_Medium_Medium(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v);
 
         elseif IsMedium(alpha) && IsLong(beta)
             % alpha and beta are medium and long, and their sum is a root
@@ -143,7 +144,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
             % N = Commutator_Coefficient_Quasisplit_Medium_Long(alpha,beta,i,j,u,v);
 
             % Otherwise, use
-            N = Commutator_Coefficient_Medium_Long(Root_System,alpha,beta,i,j,u,v);
+            N = Commutator_Coefficient_Medium_Long(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v);
 
         elseif IsLong(alpha) && IsMedium(beta)
             % alpha and beta are medium and long, and their sum is a root
@@ -159,7 +160,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
             % N = Commutator_Coefficient_Quasisplit_Medium_Long(beta,alpha,j,i,v,u);
 
             % Otherwise, use
-            N = -Commutator_Coefficient_Medium_Long(Root_System,beta,alpha,j,i,v,u);
+            N = -Commutator_Coefficient_Medium_Long(MatrixSize,Root_System,Form,beta,alpha,j,i,v,u);
 
         elseif IsShort(alpha) && IsShort(beta)
             % alpha and beta are both short, and their sum is a root
@@ -168,7 +169,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
             assert(IsMedium(alpha+beta))
 
             % This is unlike anything in the quasisplit case
-            N = Commutator_Coefficient_Short_Short(Root_System,alpha,beta,i,j,u,v);
+            N = Commutator_Coefficient_Short_Short(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v);
 
         elseif IsShort(alpha) && IsMedium(beta)
             % alpha is short and beta is medium, and their sum is a root
@@ -176,7 +177,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
             assert(IsShort(alpha+beta))
 
             % This is unlike anything in the quasisplit case
-            N = Commutator_Coefficient_Short_Medium(Root_System,alpha,beta,i,j,u,v);
+            N = Commutator_Coefficient_Short_Medium(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v);
 
         elseif IsMedium(alpha) && IsShort(beta)
             % alpha is short and beta is medium, and their sum is a root
@@ -186,7 +187,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,alpha,beta,i,j,u,v)
             % Just reuse the previous case, but reverse the roles of alpha
             % and beta, i and j, u and v, and then make the coefficient the
             % negative of what it would have been
-            N = -Commutator_Coefficient_Short_Medium(Root_System,beta,alpha,j,i,v,u);
+            N = -Commutator_Coefficient_Short_Medium(MatrixSize,Root_System,Form,beta,alpha,j,i,v,u);
 
         else
             % This should be impossible
@@ -211,15 +212,15 @@ function bool = IsLong(alpha)
     bool = (dot(alpha,alpha)==4);
 end
 
-function N = Commutator_Coefficient_Medium_Medium_Quasisplit(Root_System,alpha,beta,i,j,u,v)
+function N = Commutator_Coefficient_Medium_Medium_Quasisplit(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v)
     % alpha and beta are both medium length
     % the sum can be long or medium
-
-    n = Root_System.VectorLength;
 
     assert(IsMedium(alpha))
     assert(IsMedium(beta))
     assert(IsLong(alpha+beta) || IsMedium(alpha+beta))
+
+    assert(RootSpaceDimensionSU())
 
     % In this case, there should only be one integral linear combination of
     % alpha and beta which is a root, namely alpha+beta
@@ -295,13 +296,13 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(Root_System,alpha,b
             % the product of the signs on alpha and beta
             % determines whether u should be conjugated
             % Since u and v are represented as a vectors of length 2, first we
-            % convert to a complex representation
-            u_complex = u(1) + 1i*u(2);
-            v_complex = v(1) + 1i*v(2);
+            % convert to a "complex" representation
+            u_complex = u(1) + u(2)*P;
+            v_complex = v(1) + v(2)*P;
             
             u_prime = u_complex;
             if alpha_sign*beta_sign == 1
-                u_prime = conj(u_complex);
+                u_prime = conjugate(u_complex,P);
             end
 
             N = beta_sign*Tr(u_prime*v_complex);
@@ -329,7 +330,7 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(Root_System,alpha,b
         % u may be conjugated or not
         % v may be conjugated or not
         % the overall sign may be 1 or -1
-        % and all three of these happen essentially independently
+        % and all three of these happen independently
 
         % In this case, there must be exactly 3 distinct indices among (m,n,p,q)
         % Furthermore, the matching indices have opposite signs
@@ -396,9 +397,9 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(Root_System,alpha,b
 
     assert(length(N) == RootSpaceDimensionSU(n,Root_System,i*alpha+j*beta))
 end
-function N = Commutator_Coefficient_Medium_Long_Quasisplit(Root_System,alpha,beta,i,j,u,v)
-
-    n = Root_System.VectorLength;
+function N = Commutator_Coefficient_Medium_Long_Quasisplit(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v)
+    
+    P = Form.PrimitiveElement;
 
     % alpha is medium, beta is long
     assert(IsMedium(alpha))
@@ -458,30 +459,32 @@ function N = Commutator_Coefficient_Medium_Long_Quasisplit(Root_System,alpha,bet
         end
 
         % c_pq determines if u should be conjugated or not
-        % Since we are representing u as a vector of length 2 with entries
-        % in k, conjugation corresponds to negating the second vector
-        % component
+        assert(length(u)==2)
+        u_complex = u(1)+u(2)*P;
         if c_pq == 1
-            u(2) = -u(2);
+            %u(2) = -u(2);
+            u_prime = conjugate(u_complex,P);
+        else
+            u_prime = u;
         end
 
         % omega is a scalar +/-1
         % u is a vector of length 2
         % v is a scalar
         % so the multiplication below is well defined
-        N = omega*v*u;
+        N_complex = omega*v*u_prime;
+
+        % Now convert N to vector version
+        N_real_part = subs(N_complex,P,0);
+        N_imag_part = (N_complex - N_real_part)/P;
+        N = [N_real_part,N_imag_part];
 
     elseif i==2 && j==1
         % alpha is medium, beta  is long,
         % and the sum under consideration is 2*alpha+beta
         assert(IsLong(i*alpha+j*beta))
-
-        u_complex = u(1) + 1i*u(2);
-        u_squared_norm = u_complex*conj(u_complex);
-        
-        % I think this should b equivalent, but it doesn't seem to work
-        %u_squared_norm = u(1)^2 - u(2)^2;
-        
+        u_complex = u(1) + u(2)*P;
+        u_squared_norm = u_complex*conjugate(u_complex,P);
         N = (-1)*epsilon*omega*v*u_squared_norm;
 
     else
@@ -489,10 +492,16 @@ function N = Commutator_Coefficient_Medium_Long_Quasisplit(Root_System,alpha,bet
         assert(false,"A medium and long root in C_n have an unexpected linear combination.")
     end
 
-    assert(length(N)==RootSpaceDimensionSU(n,Root_System,i*alpha+j*beta))
+    alpha
+    beta
+    i
+    j
+    N
+
+    assert(length(N)==RootSpaceDimensionSU(MatrixSize,Root_System,i*alpha+j*beta))
 
 end
-function N = Commutator_Coefficient_Medium_Medium(Root_System,alpha,beta,i,j,u,v)
+function N = Commutator_Coefficient_Medium_Medium(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v)
     % alpha and beta are both medium length
     % the sum can be long or medium
     assert(IsMedium(alpha))
@@ -514,7 +523,7 @@ function N = Commutator_Coefficient_Medium_Medium(Root_System,alpha,beta,i,j,u,v
         assert(false,'The sum of two medium roots is a root but neither medium nor long.')
     end
 end
-function N = Commutator_Coefficient_Medium_Long(Root_System,alpha,beta,i,j,u,v)
+function N = Commutator_Coefficient_Medium_Long(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v)
     % alpha is medium, beta is long
     assert(IsMedium(alpha))
     assert(IsLong(beta))
@@ -523,7 +532,7 @@ function N = Commutator_Coefficient_Medium_Long(Root_System,alpha,beta,i,j,u,v)
     % INCOMPLETE
     N = 0;
 end
-function N = Commutator_Coefficient_Short_Short(Root_System,alpha,beta,i,j,u,v)
+function N = Commutator_Coefficient_Short_Short(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v)
     % alpha and beta are short, 
     % so the sum must be medium
     assert(IsShort(alpha))
@@ -533,7 +542,7 @@ function N = Commutator_Coefficient_Short_Short(Root_System,alpha,beta,i,j,u,v)
     % INCOMPLETE
     N = 0;
 end
-function N = Commutator_Coefficient_Short_Medium(Root_System,alpha,beta,i,j,u,v)
+function N = Commutator_Coefficient_Short_Medium(MatrixSize,Root_System,Form,alpha,beta,i,j,u,v)
     % alpha is short, beta is medium
     % so their sum must be short
     assert(IsShort(alpha))
@@ -543,6 +552,8 @@ function N = Commutator_Coefficient_Short_Medium(Root_System,alpha,beta,i,j,u,v)
     % INCOMPLETE
     N = 0;
 end
+
+
 function uv = complexProduct(u,v)
     uv = [u(1)*v(1)-u(2)*v(2),u(1)*v(2)+u(2)*v(1)];
 end

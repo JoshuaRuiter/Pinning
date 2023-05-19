@@ -1,4 +1,4 @@
-function val = CommutatorCoefficientSL(MatrixSize,Root_System,alpha,beta,p,q,u,v)
+function val = CommutatorCoefficientSL(MatrixSize,Root_System,Form,alpha,beta,p,q,u,v)
     % Given two roots alpha and beta, output the sign coefficient (1 or -1)
     % that arises in the commutator of X(alpha,u) and X(beta,v)
 
