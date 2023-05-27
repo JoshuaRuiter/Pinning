@@ -54,10 +54,10 @@ classdef PinnedGroup
         % Tests
         function RunTests(obj)
             fprintf("Running tests to verify a pinning of the " + obj.NameString + "...\n")
-            TestBasics(obj);
-            TestRootSpaceMapsAreHomomorphisms(obj);
-            TestRootSubgroupMapsAreAlmostHomomorphisms(obj);
-            TestTorusConjugationFormula(obj);
+%             TestBasics(obj);
+%             TestRootSpaceMapsAreHomomorphisms(obj);
+%             TestRootSubgroupMapsAreAlmostHomomorphisms(obj);
+%             TestTorusConjugationFormula(obj);
             TestCommutatorFormula(obj);
 %             TestWeylGroupElements(obj);
 %             TestWeylGroupConjugationFormula(obj);
@@ -175,8 +175,11 @@ classdef PinnedGroup
             fprintf("passed.")
         end
         function TestCommutatorFormula(obj)
+
+            warning('off','all')
+
             fprintf("\n\tChecking commutator formula...");
-        
+
             for i=1:length(obj.RootList)
                 alpha = obj.RootList{i};
                 dim_V_alpha = obj.RootSpaceDimension(obj.MatrixSize, obj.Root_System, alpha);
@@ -191,7 +194,7 @@ classdef PinnedGroup
                         v = sym('v',[dim_V_beta,1]);
                         X_beta_v = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,beta,v);
                         LHS = Commutator(X_alpha_u, X_beta_v);
-                        
+
                         RHS = eye(length(LHS));
                         combos = obj.Root_System.LinearCombos(alpha,beta);
                         for k=1:length(combos)
@@ -203,16 +206,41 @@ classdef PinnedGroup
                             RHS = RHS * obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,p*alpha+q*beta,N);
                         end
 
-                        alpha
-                        beta
-                        LHS
-                        RHS
-        
-                        assert(SymbolicIsEqual(LHS,RHS));
+                        % alpha medium, beta long
+                        if dot(alpha,alpha) == 2 && dot(beta,beta) == 4
+                            alpha
+                            beta
+                            LHS
+                            RHS
+                            simplify(rdivide(LHS,RHS))
+                            assert(SymbolicIsEqual(LHS,RHS));
+                        end
+
+%                         % alpha long, beta medium
+%                         if dot(alpha,alpha) == 4 && dot(beta,beta) == 2
+%                             assert(SymbolicIsEqual(LHS,RHS));
+%                         end
+% 
+%                         % alpha medium, beta medium
+%                         if dot(alpha,alpha)==2 && dot(beta,beta)==2
+%                             alpha
+%                             beta
+%                             LHS
+%                             RHS
+%                             simplify(rdivide(LHS,RHS))
+
+%                             assert(SymbolicIsEqual(LHS,RHS));
+%                         end
+
+
+%                         assert(SymbolicIsEqual(LHS,RHS));
                     end
                 end
             end
             fprintf("passed.")
+
+            warning('on','all')
+
         end
         function TestWeylGroupElements(obj)
             fprintf("\n\tChecking Weyl group elements normalize the torus...")

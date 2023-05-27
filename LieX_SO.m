@@ -9,7 +9,6 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
     n = MatrixSize;
     diff = n-2*q;
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%
     c = sym('c',diff);
     for i=1:diff
         c(i) = FormMatrix(q+i, q+i);

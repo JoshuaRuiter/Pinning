@@ -90,8 +90,8 @@ function mat = LieX_SU(MatrixSize, Root_System, NIForm, alpha, u)
         
         % switch to viewing u as a single quadratic extension element
         % P is the primitive element
-        u_complex = u(1) + u(2)*P;
-        u_conjugate = u(1) - u(2)*P;
+        u_complex = complexify(u,P);
+        u_conjugate = conjugate(u_complex,P);
 
         if sum(alpha)==0
             % alpha = alpha_i - alpha_j
