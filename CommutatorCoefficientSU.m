@@ -237,12 +237,27 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(MatrixSize,Root_Sys
     assert(length(mn)==2)
     m = mn(1);
     n = mn(2);
-    assert(m~=n)
+    assert(m<n)
     pq = find(beta);
     assert(length(pq)==2)
     p = pq(1);
     q = pq(2);
-    assert(p~=q)
+    assert(p<q);
+
+    alpha_m = zeros(1,Root_System.VectorLength);
+    alpha_m(m) = 1;
+    alpha_n = zeros(1,Root_System.VectorLength);
+    alpha_n(n) = 1;
+    alpha_p = zeros(1,Root_System.VectorLength);
+    alpha_p(p) = 1;
+    alpha_q = zeros(1,Root_System.VectorLength);
+    alpha_q(q) = 1;
+    eps_m = alpha(m);
+    eps_n = alpha(n);
+    eps_p = beta(p);
+    eps_q = beta(q);
+    assert(isequal(alpha,eps_m*alpha_m+eps_n*alpha_n));
+    assert(isequal(beta,eps_p*alpha_p+eps_q*alpha_q));
 
     if IsLong(alpha+beta)
         % alpha and beta are both medium, and their sum is long
@@ -303,32 +318,41 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(MatrixSize,Root_Sys
             v_complex = complexify(v,P);
             u_bar = conjugate(u_complex,P);
             v_bar = conjugate(v_complex,P);
-                        
-            % OLD VERSION
-            %u_prime = u_complex;
-            %if alpha_sign*beta_sign == 1
-            %    u_prime = conjugate(u_complex,P);
-            %end
-            %N = beta_sign*Tr(u_prime*v_complex);
-            
-            if alpha_sign == 1
-                if beta_sign == 1
-                    N = u_bar*v_complex - u_complex*v_bar;
+
+            if Form.Epsilon == 1
+                % Hermitian case
+                if alpha_sign == 1
+                    if beta_sign == 1
+                        N = u_bar*v_complex - u_complex*v_bar;
+                    else
+                        assert(beta_sign == -1)
+                        N = u_bar*v_bar - u_complex*v_complex;
+                    end
                 else
-                    assert(beta_sign == -1)
-                    N = u_bar*v_bar - u_complex*v_complex;
+                   assert(alpha_sign == -1)
+                    if beta_sign == 1
+                        N = u_complex*v_complex - u_bar*v_bar;
+                    else
+                        assert(beta_sign == -1)
+                        N = u_complex*v_bar - u_bar*v_complex;
+                    end
                 end
+                N = N/P;
             else
-               assert(alpha_sign == -1)
-                if beta_sign == 1
-                    N = u_complex*v_complex - u_bar*v_bar;
+                if alpha_sign == 1
+                    if beta_sign == 1
+                        N = u_complex*v_bar + u_bar*v_complex;
+                    else
+                        N = -u_complex*v_complex - u_bar*v_bar;
+                    end
                 else
-                    assert(beta_sign == -1)
-                    N = u_complex*v_bar - u_bar*v_complex;
+                    if beta_sign == 1
+                        N = u_complex*v_complex + u_bar*v_bar;
+                    else
+                        N = -u_complex*v_bar - u_bar*v_complex;
+                    end
                 end
             end
-            
-            N = N/P;
 
         elseif abs(sum(alpha))==2
 
@@ -354,10 +378,26 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(MatrixSize,Root_Sys
         % v may be conjugated or not
         % the overall sign may be 1 or -1
         % and all three of these happen independently
+        P = Form.PrimitiveElement;
+        u_complex = complexify(u,P);
+        v_complex = complexify(v,P);
+        u_bar = conjugate(u_complex,P);
+        v_bar = conjugate(v_complex,P);
+
+        % Recall that
+        % alpha = +/- alpha_m +/- alpha_n
+        % beta = +/- alpha_p +/- alpha_q
+        % with m < n and p < q
+        assert(isequal(alpha,eps_m*alpha_m+eps_n*alpha_n));
+        assert(isequal(beta,eps_p*alpha_p+eps_q*alpha_q));
+        assert(m<n)
+        assert(p<q)
 
         % In this case, there must be exactly 3 distinct indices among (m,n,p,q)
         % Furthermore, the matching indices have opposite signs
-        % We want to keep track of which entry is nonzero in both roots
+        % In other words, we can rewrite alpha and beta as
+        % alpha = eps_r*alpha_r + eps_s*alpha_s
+        % beta = -eps_r*alpha_r + eps_t*alpha_t
         if m == p || m == q
             r = m;
             s = n;
@@ -375,26 +415,44 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(MatrixSize,Root_Sys
                 t = p;
             end
         else
-            assert(false);
+            assert(false,'A sum of two medium roots does not have the expected form.');
         end
 
-        % In this case, N should be a vector of length 2
-        % The commutator coefficient depends on the order of r, s, and t
-        P = Form.PrimitiveElement;
-        u_complex = complexify(u,P);
-        v_complex = complexify(v,P);
-        u_bar = conjugate(u_complex,P);
-        v_bar = conjugate(v_complex,P);
+        % alpha = eps_r*alpha_r + eps_s*alpha_s
+        % beta = -eps_r*alpha_r + eps_t*alpha_t
+        alpha_r = zeros(1,Root_System.VectorLength);
+        alpha_r(r) = 1;
+        alpha_s = zeros(1,Root_System.VectorLength);
+        alpha_s(s) = 1;
+        alpha_t = zeros(1,Root_System.VectorLength);
+        alpha_t(t) = 1;
+        eps_r = alpha(r);
+        eps_s = alpha(s);
+        eps_t = beta(t);
+        assert(beta(r)==-eps_r)
+        assert(isequal(alpha,eps_r*alpha_r+eps_s*alpha_s))
+        assert(isequal(beta,-eps_r*alpha_r+eps_t*alpha_t))
+
+        % Placeholder
+        N_complex = 0;
+
+        r
+        s
+        t
 
         if alpha(r)==-alpha(s) && beta(r)==-beta(t)
+        %if sum(alpha)==0 && sum(beta)==0
+        %if eps_r == -eps_s && -eps_r == -eps_t
             % The entries of each root have opposite signs
-            % Here, the commutator coefficient is just the sign of beta(r)
-            %N = beta(r)*complexProduct(u,v);
-            N_complex = beta(r)*u_complex*v_complex;
+            % This behaves essentially like a copy of SL_n
+            N_complex = - eps_r*u_complex*v_complex;
+            
         elseif r < s && r < t
+            % r is smaller than both s and t
             if alpha(r)==alpha(s) && beta(r)==beta(t)
+            %if eps_r == eps_s && -eps_r == eps_t
                 %N = alpha(r)*vectorConjugate(complexProduct(u,v));
-                N_complex = alpha(r)*u_bar*v_bar;
+                N_complex = eps_r*u_bar*v_bar;
             elseif (t-s)*beta(r)*beta(t) > 0
                 % Entries with the same sign are spaced farther apart than
                 % entries with the opposite sign.
@@ -402,9 +460,11 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(MatrixSize,Root_Sys
                 N_complex = beta(r)*u_complex*v_complex;
             else
                 %N = beta(r)*vectorConjugate(complexProduct(u,v));
-                N_complex = beta(r)*u_bar*v_bar;
+                N_complex = eps_r*u_bar*v_bar;
             end
+
         elseif r > s && r > t
+            % r is bigger than both s and t
             if alpha(r)==alpha(s) && beta(r)==beta(t)
                 %N = alpha(r)*complexProduct(u,v);
                 N_complex = alpha(r)*u_complex*v_complex;
@@ -415,13 +475,16 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(MatrixSize,Root_Sys
                 %N = beta(r)*complexProduct(vectorConjugate(u),v);
                 N_complex = beta(r)*u_bar*v_complex;
             end
+            
         else
             % In this case, r is between s and t
+
             if (t-s)*beta(r)*beta(t)>0 && alpha(s)==beta(t)
                 %N = beta(r)*complexProduct(u,v);
                 N_complex = beta(r)*u_complex*v_complex;
             elseif s < t
                 %N = beta(r)*alpha(s)*beta(t)*complexProduct(u,vectorConjugate(v));
+                %N_complex = (-1)*beta(r)*alpha(s)*beta(t)*u_complex*v_bar;
                 N_complex = beta(r)*alpha(s)*beta(t)*u_complex*v_bar;
             else 
                 %N = beta(r)*alpha(s)*beta(t)*complexProduct(vectorConjugate(u),v);
@@ -463,33 +526,33 @@ function N = Commutator_Coefficient_Medium_Long_Quasisplit(MatrixSize,Root_Syste
     assert(i==1 || i==2)
     assert(j==1)
 
-    % We can always write beta in the form -2*epsilon*alpha_p
-    % for some p and some +/- sign epsilon
-    p = find(beta~=0);
-    assert(length(p)==1)
-    epsilon = 1;
+    % We can always write beta in the form -2*eps_s*alpha_s
+    % for some p and some +/- sign eps_s
+    s = find(beta~=0);
+    assert(length(s)==1)
+    eps_s = 1;
     if sum(beta)==2
-        epsilon = -1;
+        eps_s = -1;
     end
-    alpha_p = zeros(1,Root_System.VectorLength);
-    alpha_p(p) = 1;
-    assert(isequal(beta,-2*epsilon*alpha_p))
+    alpha_s = zeros(1,Root_System.VectorLength);
+    alpha_s(s) = 1;
+    assert(isequal(beta,-2*eps_s*alpha_s))
 
-    % We can always write alpha in the form epsilon*alpha_p + omega*alpha_q
-    % for some independent signs epsilon and omega
-    % and some positive integer indices p and q
-    pq = find(alpha~=0);
-    assert(length(pq)==2);
-    if pq(1)==p
-        q = pq(2);
+    % We can always write alpha in the form eps_s*alpha_s + eps_t*alpha_t
+    % for some independent signs eps_s and eps_t
+    % and some positive integer indices s and t
+    st = find(alpha~=0);
+    assert(length(st)==2);
+    if st(1)==s
+        t = st(2);
     else
-        q = pq(1);
+        t = st(1);
     end
-    assert(p~=q)
-    omega = alpha(q);
-    alpha_q = zeros(1,Root_System.VectorLength);
-    alpha_q(q) = 1;
-    assert(isequal(alpha, epsilon*alpha_p + omega*alpha_q))
+    assert(s~=t)
+    eps_t = alpha(t);
+    alpha_t = zeros(1,Root_System.VectorLength);
+    alpha_t(t) = 1;
+    assert(isequal(alpha, eps_s*alpha_s + eps_t*alpha_t))
 
     % Finally, do the calculations for N
     if i==1 && j==1
@@ -502,22 +565,34 @@ function N = Commutator_Coefficient_Medium_Long_Quasisplit(MatrixSize,Root_Syste
         assert(length(u)==2)
         u_complex = complexify(u,P);
         
-        % c_pq trackes the order of p and q
-        % if p < q, then c_pq = 1
-        % if p > q, then c_pq = -1
+        % c_st trackes the order of p and q
+        % if s < t, then c_st = 1
+        % if s > t, then c_st = -1
         % c_pq determines if u should be conjugated or not
-        c_pq = 1;
-        if p > q
-            c_pq = -1;
+        c_st = 1;
+        if s > t
+            c_st = -1;
             u_prime = u_complex;
         else
-            c_pq = 1;
+            c_st = 1;
             u_prime = conjugate(u_complex,P);
         end
 
-        N_complex = (-1)*Form.Epsilon*epsilon*P_eps*v*u_prime;
-        if abs(sum(alpha))==2
-            N_complex = c_pq*N_complex;
+        if Form.Epsilon == 1
+            % Hermitian case
+            N_complex = (-1)*eps_s*P_eps*v*u_prime;
+            if abs(sum(alpha))==2
+                N_complex = c_st*N_complex;
+            end
+        else 
+            % Form.Epsilon == -1
+            % Skew hermitian case
+            if abs(sum(alpha)) == 2
+                N_complex = eps_s*v*u_prime;
+            else
+                % sum(alpha) == 0
+                N_complex = (-1)*eps_s*v*u_prime;
+            end
         end
         N = uncomplexify(N_complex,P);
 
@@ -527,8 +602,18 @@ function N = Commutator_Coefficient_Medium_Long_Quasisplit(MatrixSize,Root_Syste
         assert(IsLong(i*alpha+j*beta))
         u_complex = complexify(u,P);
         u_bar = conjugate(u_complex,P);
-        N = Form.Epsilon*v*u_complex*u_bar;
 
+        if Form.Epsilon == 1
+            % Hermitian case
+            N = v*u_complex*u_bar;
+        else
+            % Form.Epsilon == -1
+            % Skew hermitian case
+            N = v*u_complex*u_bar;
+            if abs(sum(alpha)) == 2
+                N = (-1)*N;
+            end
+        end
     else
         % This should be impossible
         assert(false,"A medium and long root in C_n have an unexpected linear combination.")
@@ -588,11 +673,3 @@ function N = Commutator_Coefficient_Short_Medium(MatrixSize,Root_System,Form,alp
     % INCOMPLETE
     N = 0;
 end
-
-
-% function uv = complexProduct(u,v)
-%     uv = [u(1)*v(1)-u(2)*v(2),u(1)*v(2)+u(2)*v(1)];
-% end
-% function uOut = vectorConjugate(uIn)
-%     uOut = [uIn(1),-uIn(2)];
-% end

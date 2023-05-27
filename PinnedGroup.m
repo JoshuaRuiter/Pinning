@@ -206,32 +206,47 @@ classdef PinnedGroup
                             RHS = RHS * obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,p*alpha+q*beta,N);
                         end
 
-                        % alpha medium, beta long
-                        if dot(alpha,alpha) == 2 && dot(beta,beta) == 4
-                            alpha
-                            beta
-                            LHS
-                            RHS
-                            simplify(rdivide(LHS,RHS))
-                            assert(SymbolicIsEqual(LHS,RHS));
-                        end
-
+%                         % alpha medium, beta long
+%                         if dot(alpha,alpha) == 2 && dot(beta,beta) == 4
+%                             assert(SymbolicIsEqual(LHS,RHS));
+%                         end
+% 
 %                         % alpha long, beta medium
 %                         if dot(alpha,alpha) == 4 && dot(beta,beta) == 2
 %                             assert(SymbolicIsEqual(LHS,RHS));
 %                         end
 % 
-%                         % alpha medium, beta medium
-%                         if dot(alpha,alpha)==2 && dot(beta,beta)==2
-%                             alpha
-%                             beta
-%                             LHS
-%                             RHS
-%                             simplify(rdivide(LHS,RHS))
-
+%                         % alpha medium, beta medium, alpha+beta long
+%                         if dot(alpha,alpha)==2 && dot(beta,beta)==2 && dot(alpha+beta,alpha+beta)==4
 %                             assert(SymbolicIsEqual(LHS,RHS));
 %                         end
 
+                        % alpha medium, beta medium, alpha+beta medium
+                        if dot(alpha,alpha)==2 && dot(beta,beta)==2 && dot(alpha+beta,alpha+beta)==2
+                               
+                            % SL_n case
+                            if sum(alpha)==0 && sum(beta)==0
+                                assert(SymbolicIsEqual(LHS,RHS));
+                            else
+                                % one of alpha or beta has a sum of not zero
+                                
+                                alpha
+                                beta
+    
+%                                 syms m1;
+%                                 syms m2;
+%                                 M = [m1,m2];
+%                                 syms P;
+%                                 temp = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha+beta,M);
+%                                 position = find(temp == m1+m2*P);
+%                                 LHS(position)
+    
+                                LHS
+%                                 RHS
+                                simplify(rdivide(LHS,RHS))
+                                assert(SymbolicIsEqual(LHS,RHS));
+                            end
+                        end
 
 %                         assert(SymbolicIsEqual(LHS,RHS));
                     end

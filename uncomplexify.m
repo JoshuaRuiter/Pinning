@@ -1,6 +1,11 @@
 function my_vector = uncomplexify(scalar,PrimitiveElement)
     assert(length(scalar)==1);
 
+    if scalar == 0
+        my_vector = [0,0];
+        return
+    end
+
     real_part = 0;
     imag_part = 0;
 
