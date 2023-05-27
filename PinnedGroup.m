@@ -54,10 +54,10 @@ classdef PinnedGroup
         % Tests
         function RunTests(obj)
             fprintf("Running tests to verify a pinning of the " + obj.NameString + "...\n")
-%             TestBasics(obj);
-%             TestRootSpaceMapsAreHomomorphisms(obj);
-%             TestRootSubgroupMapsAreAlmostHomomorphisms(obj);
-%             TestTorusConjugationFormula(obj);
+            TestBasics(obj);
+            TestRootSpaceMapsAreHomomorphisms(obj);
+            TestRootSubgroupMapsAreAlmostHomomorphisms(obj);
+            TestTorusConjugationFormula(obj);
             TestCommutatorFormula(obj);
 %             TestWeylGroupElements(obj);
 %             TestWeylGroupConjugationFormula(obj);
@@ -176,7 +176,7 @@ classdef PinnedGroup
         end
         function TestCommutatorFormula(obj)
 
-            warning('off','all')
+%             warning('off','all')
 
             fprintf("\n\tChecking commutator formula...");
 
@@ -206,55 +206,208 @@ classdef PinnedGroup
                             RHS = RHS * obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,p*alpha+q*beta,N);
                         end
 
+                        % ORIGINAL TEST
+                        assert(SymbolicIsEqual(LHS,RHS))
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Begin specialized tests for quasisplit group commutator coefficients
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                         % alpha medium, beta long
 %                         if dot(alpha,alpha) == 2 && dot(beta,beta) == 4
+%                             % Passes for (6,3,1) and (6,3,-1)
 %                             assert(SymbolicIsEqual(LHS,RHS));
 %                         end
 % 
 %                         % alpha long, beta medium
 %                         if dot(alpha,alpha) == 4 && dot(beta,beta) == 2
+%                             % Passes for (6,3,1) and (6,3,-1)
 %                             assert(SymbolicIsEqual(LHS,RHS));
 %                         end
 % 
 %                         % alpha medium, beta medium, alpha+beta long
 %                         if dot(alpha,alpha)==2 && dot(beta,beta)==2 && dot(alpha+beta,alpha+beta)==4
+%                             % Passes for (6,3,1) and (6,3,-1)
 %                             assert(SymbolicIsEqual(LHS,RHS));
 %                         end
+% 
+%                         % alpha medium, beta medium, alpha+beta medium
+%                         if dot(alpha,alpha)==2 && dot(beta,beta)==2 && dot(alpha+beta,alpha+beta)==2
+%                                
+%                             mn = find(alpha);
+%                             assert(length(mn)==2)
+%                             m = mn(1);
+%                             n = mn(2);
+%                             assert(m<n)
+%                             pq = find(beta);
+%                             assert(length(pq)==2)
+%                             p = pq(1);
+%                             q = pq(2);
+%                             assert(p<q);
+% 
+%                             alpha_m = zeros(1,obj.Root_System.VectorLength);
+%                             alpha_m(m) = 1;
+%                             alpha_n = zeros(1,obj.Root_System.VectorLength);
+%                             alpha_n(n) = 1;
+%                             alpha_p = zeros(1,obj.Root_System.VectorLength);
+%                             alpha_p(p) = 1;
+%                             alpha_q = zeros(1,obj.Root_System.VectorLength);
+%                             alpha_q(q) = 1;
+%                             eps_m = alpha(m);
+%                             eps_n = alpha(n);
+%                             eps_p = beta(p);
+%                             eps_q = beta(q);
+%                             assert(isequal(alpha,eps_m*alpha_m+eps_n*alpha_n));
+%                             assert(isequal(beta,eps_p*alpha_p+eps_q*alpha_q));
+% 
+%                             if m == p || m == q
+%                                 r = m;
+%                                 s = n;
+%                                 if m == p
+%                                     t = q;
+%                                 else
+%                                     t = p;
+%                                 end
+%                             elseif n == p || n == q
+%                                 r = n;
+%                                 s = m;
+%                                 if n == p
+%                                     t = q;
+%                                 else
+%                                     t = p;
+%                                 end
+%                             end
+% 
+%                             alpha_r = zeros(1,obj.Root_System.VectorLength);
+%                             alpha_r(r) = 1;
+%                             alpha_s = zeros(1,obj.Root_System.VectorLength);
+%                             alpha_s(s) = 1;
+%                             alpha_t = zeros(1,obj.Root_System.VectorLength);
+%                             alpha_t(t) = 1;
+%                             eps_r = alpha(r);
+%                             eps_s = alpha(s);
+%                             eps_t = beta(t);
+%                             assert(beta(r)==-eps_r)
+%                             assert(isequal(alpha,eps_r*alpha_r+eps_s*alpha_s))
+%                             assert(isequal(beta,-eps_r*alpha_r+eps_t*alpha_t))
+% 
+%                             if alpha(r)==-alpha(s) && beta(r)==-beta(t)
+%                                 % The entries of each root have opposite signs
+%                                 % This behaves essentially like a copy of SL_n
+%                                 % Tests pass for (6,3,1) and (6,3,-1)
+%                                 fprintf("A")
+% %                                 alpha
+% %                                 beta
+% %                                 LHS
+% %                                 simplify(rdivide(LHS,RHS))
+%                                 assert(SymbolicIsEqual(LHS,RHS));
+%                                 
+%                             elseif r < s && r < t
+%                                 % r is smaller than both s and t
+%                                 if alpha(r)==alpha(s) && beta(r)==beta(t)
+%                                     % Tests pass for (6,3,1) and (6,3,-1)
+%                                     fprintf("B1")
+% %                                     alpha
+% %                                     beta
+% %                                     LHS
+% %                                     simplify(rdivide(LHS,RHS))
+%                                     assert(SymbolicIsEqual(LHS,RHS));
+% 
+%                                 elseif (t-s)*beta(r)*beta(t) > 0
+%                                     % Entries with the same sign are spaced farther apart than
+%                                     % entries with the opposite sign.
+%                                     % Tests pass for (6,3,1) and (6,3,-1)
+%                                     fprintf("B2")
+% %                                     alpha
+% %                                     beta
+% %                                     LHS
+% %                                     simplify(rdivide(LHS,RHS))
+%                                     assert(SymbolicIsEqual(LHS,RHS));
+% 
+%                                 else
+%                                     % Tests pass for (6,3,1) and (6,3,-1)
+%                                     fprintf("B3")
+% %                                     alpha
+% %                                     beta
+% %                                     LHS
+% %                                     simplify(rdivide(LHS,RHS))
+%                                     assert(SymbolicIsEqual(LHS,RHS));
+% 
+%                                 end
+%                         
+%                             elseif r > s && r > t
+%                                 % r is bigger than both s and t
+%                                 if alpha(r)==alpha(s) && beta(r)==beta(t)
+%                                     % Tests pass for (6,3,1) and (6,3,-1)
+%                                     fprintf("C1")
+% %                                     alpha
+% %                                     beta
+% %                                     LHS
+% %                                     simplify(rdivide(LHS,RHS))
+%                                     assert(SymbolicIsEqual(LHS,RHS));
+% 
+%                                 elseif s < t
+%                                     % Tests pass for (6,3,1) and (6,3,-1)
+%                                     fprintf("C2")
+% %                                     alpha
+% %                                     beta
+% %                                     LHS
+% %                                     simplify(rdivide(LHS,RHS))
+%                                     assert(SymbolicIsEqual(LHS,RHS));
+% 
+%                                 else
+%                                     % Tests pass for (6,3,1) and (6,3,-1)
+%                                     fprintf("C3")
+% %                                     alpha
+% %                                     beta
+% %                                     LHS
+% %                                     simplify(rdivide(LHS,RHS))
+%                                     assert(SymbolicIsEqual(LHS,RHS));
+% 
+%                                 end
+%                                 
+%                             else
+%                                 % r is between s and t
+%                                 if (t-s)*beta(r)*beta(t)>0 && alpha(s)==beta(t)
+%                                     % Tests pass for (6,3,1) and (6,3,-1)
+%                                     fprintf("D1")
+% %                                     alpha
+% %                                     beta
+% %                                     LHS
+% %                                     simplify(rdivide(LHS,RHS))
+%                                     assert(SymbolicIsEqual(LHS,RHS));
+% 
+%                                 elseif s < t
+%                                     % Tests pass for (6,3,1) and (6,3,-1)
+%                                     fprintf("D2")
+% %                                     alpha
+% %                                     beta
+% %                                     LHS
+% %                                     simplify(rdivide(LHS,RHS))
+%                                     assert(SymbolicIsEqual(LHS,RHS));
+% 
+%                                 else
+%                                     fprintf("D3")
+% %                                     alpha
+% %                                     beta
+% %                                     LHS
+% %                                     simplify(rdivide(LHS,RHS))
+%                                     assert(SymbolicIsEqual(LHS,RHS));
+% 
+% 
+%                                 end
+%                             end                        
+%                         end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% End specialized tests for quasisplit group commutator coefficients
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-                        % alpha medium, beta medium, alpha+beta medium
-                        if dot(alpha,alpha)==2 && dot(beta,beta)==2 && dot(alpha+beta,alpha+beta)==2
-                               
-                            % SL_n case
-                            if sum(alpha)==0 && sum(beta)==0
-                                assert(SymbolicIsEqual(LHS,RHS));
-                            else
-                                % one of alpha or beta has a sum of not zero
-                                
-                                alpha
-                                beta
-    
-%                                 syms m1;
-%                                 syms m2;
-%                                 M = [m1,m2];
-%                                 syms P;
-%                                 temp = obj.RootSubgroupMap(obj.MatrixSize,obj.Root_System,obj.Form,alpha+beta,M);
-%                                 position = find(temp == m1+m2*P);
-%                                 LHS(position)
-    
-                                LHS
-%                                 RHS
-                                simplify(rdivide(LHS,RHS))
-                                assert(SymbolicIsEqual(LHS,RHS));
-                            end
-                        end
-
-%                         assert(SymbolicIsEqual(LHS,RHS));
                     end
                 end
             end
             fprintf("passed.")
 
-            warning('on','all')
+%             warning('on','all')
 
         end
         function TestWeylGroupElements(obj)

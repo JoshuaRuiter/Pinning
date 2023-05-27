@@ -433,62 +433,102 @@ function N = Commutator_Coefficient_Medium_Medium_Quasisplit(MatrixSize,Root_Sys
         assert(isequal(alpha,eps_r*alpha_r+eps_s*alpha_s))
         assert(isequal(beta,-eps_r*alpha_r+eps_t*alpha_t))
 
-        % Placeholder
-        N_complex = 0;
-
-        r
-        s
-        t
-
         if alpha(r)==-alpha(s) && beta(r)==-beta(t)
         %if sum(alpha)==0 && sum(beta)==0
         %if eps_r == -eps_s && -eps_r == -eps_t
             % The entries of each root have opposite signs
             % This behaves essentially like a copy of SL_n
+            % Tests pass for (6,3,1) and (6,3,-1)
+            % Case A
+            % fprintf("A")
             N_complex = - eps_r*u_complex*v_complex;
             
         elseif r < s && r < t
             % r is smaller than both s and t
             if alpha(r)==alpha(s) && beta(r)==beta(t)
-            %if eps_r == eps_s && -eps_r == eps_t
-                %N = alpha(r)*vectorConjugate(complexProduct(u,v));
+                % Tests pass for (6,3,1) and (6,3,-1)
+                % Case B1
+                % fprintf("B1")
                 N_complex = eps_r*u_bar*v_bar;
             elseif (t-s)*beta(r)*beta(t) > 0
                 % Entries with the same sign are spaced farther apart than
                 % entries with the opposite sign.
-                %N = beta(r)*complexProduct(u,v);
+                % Tests pass for (6,3,1) and (6,3,-1)
+                % Case B2
+                % fprintf("B2")
                 N_complex = beta(r)*u_complex*v_complex;
             else
-                %N = beta(r)*vectorConjugate(complexProduct(u,v));
-                N_complex = eps_r*u_bar*v_bar;
+                % Tests pass for (6,3,1) and (6,3,-1)
+                % Case B3
+                % fprintf("B3")
+                N_complex = Form.Epsilon*eps_r*u_bar*v_bar;
             end
 
         elseif r > s && r > t
             % r is bigger than both s and t
             if alpha(r)==alpha(s) && beta(r)==beta(t)
-                %N = alpha(r)*complexProduct(u,v);
+                % Tests pass for (6,3,1) and (6,3,-1)
+                % Case C1
+                % fprintf("C1")
                 N_complex = alpha(r)*u_complex*v_complex;
             elseif s < t
-                %N = beta(r)*complexProduct(u,vectorConjugate(v));
-                N_complex = beta(r)*u_complex*v_bar;
+                % Tests pass for (6,3,1) and (6,3,-1)
+                % Case C2
+                % fprintf("C2")
+                if Form.Epsilon == 1
+                    % Hermitian case
+                    N_complex = (-1)*eps_t*u_complex*v_bar;
+                else
+                    % Form.Epsilon == -1
+                    % Skew hermitian case
+                    N_complex = (-1)*eps_r*u_complex*v_bar;
+                end
+
             else 
-                %N = beta(r)*complexProduct(vectorConjugate(u),v);
-                N_complex = beta(r)*u_bar*v_complex;
+                % Tests pass for (6,3,1) and (6,3,-1)
+                % Case C3
+                % fprintf("C3")
+                if Form.Epsilon == 1
+                    % Hermitian case
+                    N_complex = eps_t*u_bar*v_complex;
+                else
+                    % Form.Espilon == -1
+                    % Skew hermitian case
+                    N_complex = -eps_r*u_bar*v_complex;
+                end
             end
             
         else
-            % In this case, r is between s and t
-
+            % r is between s and t
             if (t-s)*beta(r)*beta(t)>0 && alpha(s)==beta(t)
-                %N = beta(r)*complexProduct(u,v);
+                % Tests pass for (6,3,1) and (6,3,-1)
+                % Case D1
+                % fprintf("D1")
                 N_complex = beta(r)*u_complex*v_complex;
             elseif s < t
-                %N = beta(r)*alpha(s)*beta(t)*complexProduct(u,vectorConjugate(v));
-                %N_complex = (-1)*beta(r)*alpha(s)*beta(t)*u_complex*v_bar;
-                N_complex = beta(r)*alpha(s)*beta(t)*u_complex*v_bar;
-            else 
-                %N = beta(r)*alpha(s)*beta(t)*complexProduct(vectorConjugate(u),v);
-                N_complex = beta(r)*alpha(s)*beta(t)*u_bar*v_complex;
+                % Tests pass for (6,3,1) and (6,3,-1)
+                % Case D2
+                % fprintf("D2")
+                if Form.Epsilon == 1
+                    % Hermitian case
+                    N_complex = (-1)*eps_s*u_complex*v_bar;
+                else
+                    % Form.Epsilon == -1
+                    % Skew hermitian case
+                    N_complex = (-1)*eps_t*u_complex*v_bar;
+                end
+            else
+                % Tests pass for (6,3,1)
+                % Case D3
+                % fprintf("D3")
+                if Form.Epsilon == 1
+                    % Hermitian case
+                    N_complex = eps_t*u_bar*v_complex;
+                else
+                    % Form.Epsilon == -1
+                    % Skew hermitian case
+                    N_complex = eps_s*u_bar*v_complex;
+                end
             end
         end
 
