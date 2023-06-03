@@ -14,7 +14,7 @@ function RunSOTests(n,q)
     else
         vec_C = [];
     end
-    Form = NIForm(n,q,1,vec_C,'symmetric bilinear');
+    Form = NIForm(n,q,1,vec_C,0,'symmetric bilinear');
 
     RootSpaceDimension = @RootSpaceDimensionSO;
     RootSpaceMap = @LieX_SO;
