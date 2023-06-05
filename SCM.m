@@ -38,14 +38,48 @@ classdef SCM
             bool = isequal(obj.Concrete_base,eye(obj.Size)) && length(obj.List_of_terms)==1;
         end
 
+        % Overloading unary negative operator
+        function negative = uminus(obj)
+            num_terms = length(obj.List_of_terms);
+            List_of_negative_terms = cell(1,num_terms);
+            for t=1:num_terms
+                List_of_negative_terms{t} = -ob.List_of_terms{t};
+            end
+            negative = SCM(obj.Size,-obj.Concrete_base,List_of_negative_terms);
+        end
+
         function inverse = invert(obj)
             % Compute the inverse in elementary matrix case, i.e. when
             % the concrete_base is the identity, and there is only one term
             assert(obj.isElementary())
+            inverse = SCM(obj.Size,obj.Concrete_base,{-obj.List_of_terms{1}});
+        end
 
-            term = obj.List_of_terms{1};
-            negative_term = negate(term);
-            inverse = SCM(obj.Size,obj.Concrete_base,{negative_term});
+        function output_table = tableForm(obj, with_size)
+            % Create a tabular output version of the SCM object
+            % The table is formatted as follows:
+            %   There is one row for each term in the List_of_terms 
+            %   In that row is (Row, Column, Entry)
+            %   or (Row, Column, Entry, Size) if with_size == 1
+            % with the entry converted to a symbolic format
+            % if it is an SKD object
+
+            if nargin == 1
+                with_size = 0;
+            end
+
+            if with_size
+                num_columns = 4;
+            else
+                num_columns = 3;
+            end
+            
+            num_terms = length(obj.List_of_terms);
+            output_table = sym(zeros(num_terms, num_columns));    
+            for t=1:length(obj.List_of_terms)
+                term_t = obj.List_of_terms{t};
+                output_table(t,1:num_columns) = term_t.rowForm();
+            end
         end
 
         function simplified_copy = cancelPairs(obj)
@@ -62,22 +96,63 @@ classdef SCM
                 term_i = simplified_copy.List_of_terms{i};
                 while j<=length(simplified_copy.List_of_terms)
                     term_j = simplified_copy.List_of_terms{j};
-                    if isequal(term_i,term_j.negate())
-
+                    if isequal(term_i,-term_j)
                         % Remove both terms, starting with the later one
                         simplified_copy.List_of_terms(j) = [];
                         simplified_copy.List_of_terms(i) = [];
-                        
-                        % Adjust i and j to compensate for the newly
-                        % missing list entries
+                       
+                        % Adjust i to compensate for now missing entry
+                        % and break out of the j loop
+                        % Note this only breaks out of the j loop,
+                        % not the i loop
                         i=i-1;
-                        j=j-2;
+                        break
                     end
                     j=j+1;
                 end
                 i=i+1;
                 j=i+1;
             end
+        end
+
+        function simplified_copy = simplifyWithAssumption(obj, assumption)
+            % Given an assumption, zero out any terms which are
+            % zero under that assumption
+            simplified_copy = obj;
+            t = 1;
+            while t <= length(simplified_copy.List_of_terms)
+                term_t = simplified_copy.List_of_terms{t}; % an SSEM object
+                entry_t = term_t.Entry;                    % could be an SKD object
+                if isequal(entry_t,0)
+                    % Zero entry, can remove term_t
+                    simplified_copy.List_of_terms(t) = [];
+                    % Adjust t to compensate for the removed term
+                    t = t-1;
+                elseif isa(entry_t, 'SKD')
+                    conditions_t = entry_t.Conditions; % a list of equations
+                    % Iterate over all conditions, check if any single 
+                    % condition contradicts the assumption
+                    for c=1:length(conditions_t)
+                        if isequal(conditions_t(c), ~assumption)
+                            % Remove the entry
+                            simplified_copy.List_of_terms(t) = [];
+                            t = t-1;
+                            break; % This only exits the for loop, not the while loop
+                        end
+                    end
+                end
+                t = t+1;
+            end
+        end
+
+        function new_obj = addDerivedConditions(obj)
+            new_terms = cell(size(obj.List_of_terms));
+            for t=1:length(obj.List_of_terms)
+                term_t = obj.List_of_terms{t};
+                new_term_t = term_t.addDerivedConditions();
+                new_terms{t} = new_term_t;
+            end
+            new_obj = SCM(obj.Size,obj.Concrete_base,new_terms);
         end
 
     end
@@ -175,7 +250,7 @@ classdef SCM
             e_ab_u = SCM(n,eye(n),{E_ab_u});
             assert(e_ab_u.isElementary())
             e_ab_u_inverse = e_ab_u.invert();
-            e_ab_u_manual_inverse = SCM(n,eye(n),{E_ab_u.negate()});
+            e_ab_u_manual_inverse = SCM(n,eye(n),{-E_ab_u});
             assert(isequal(e_ab_u_inverse,e_ab_u_manual_inverse))
 
             E_cd_v = SSEM(c,d,n,v);

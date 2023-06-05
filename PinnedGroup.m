@@ -53,15 +53,15 @@ classdef PinnedGroup
 
         % Tests
         function RunTests(obj)
-%             obj.Root_System.VerifyProperties();
+            obj.Root_System.VerifyProperties();
             fprintf("Running tests to verify a pinning of the " + obj.NameString + "...\n")
             TestBasics(obj);
             TestRootSpaceMapsAreHomomorphisms(obj);
             TestRootSubgroupMapsAreAlmostHomomorphisms(obj);
             TestTorusConjugationFormula(obj);
-%             TestCommutatorFormula(obj);
-%             TestWeylGroupElements(obj);
-%             TestWeylGroupConjugationFormula(obj);
+            TestCommutatorFormula(obj);
+            TestWeylGroupElements(obj);
+            TestWeylGroupConjugationFormula(obj);
             fprintf("\n\nAll tests passed.\n\n")
         end
         function TestBasics(obj)
