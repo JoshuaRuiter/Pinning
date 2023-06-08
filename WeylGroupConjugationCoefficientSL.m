@@ -19,7 +19,7 @@ function val = WeylGroupConjugationCoefficientSL(MatrixSize,root_system,FormMatr
     k = find(beta==1);
     l = find(beta==-1);
 
-    % I don't fully understand why it is -1 when i=k or i=l
+    % I don't understand why it is -1 when i=k or i=l
     % and 1 otherwise, but it does pass the tests.
     val = u;
     if i==k || i==l

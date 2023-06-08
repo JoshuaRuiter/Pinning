@@ -15,7 +15,7 @@ function val = CommutatorCoefficientSL(MatrixSize,Root_System,Form,alpha,beta,p,
     if ~Root_System.IsRoot(alpha+beta)
         % If alpha+beta is not a root, then the coefficient is zero
         % which is the same as saying that the commutator of X(alpha,u)
-        % and X(beta,v) is X(alpha+beta,0)=I
+        % and X(beta,v) is X(alpha+beta,0)=Identity
         val = 0;
 
     else
@@ -23,7 +23,7 @@ function val = CommutatorCoefficientSL(MatrixSize,Root_System,Form,alpha,beta,p,
         % In this case, the value is either 1 or -1
         assert(Root_System.IsRoot(alpha+beta))
 
-        % We can always write alpha=alpha_ij 
+        % We can always write alpha=alpha_ij
         % and beta=alpha_kl for some i,j,k,l
         % This finds the index of the first entry of alpha which is 1
         i = find(alpha==1); 
@@ -31,23 +31,24 @@ function val = CommutatorCoefficientSL(MatrixSize,Root_System,Form,alpha,beta,p,
         k = find(beta==1);
         l = find(beta==-1);
 
-        % If alpha+beta is a root, then there must be some overlapping
-        % index, but no more than one overlapping index. So it must be one
-        % of the following cases:
-        % (1) i==k and i,j,l are distinct
+        % If alpha+beta is a root, then there must be exactly one
+        % overlapping index between two indices corresponding
+        % to oppositely signed entries of alpha and beta.
+        % In other words, there are exactly two possibilities:
+        % (1) j==k and i,j,l are distinct
         % (2) i==l and i,j,k are distinct
-        % (3) j==k and i,j,l are distinct
-        % (4) j==l and i,j,k are distinct
+        assert(j==k || i==l)
 
-        % The coefficient should be uv in cases (1) and (3)
-        % and -uv in cases (2) and (4)
-        if i==k || j ==k
+        % The coefficient should be uv in case (1)
+        % and -uv in case (2)
+        if j==k
             val = u*v;
-        elseif i==l || j==l
+        elseif i==l
             val = -u*v;
         else
             % This should be impossible, throw an error if you get here
-            assert(false, "A sum of two roots in A_(n-1) is a root, but the roots are not of the right form.");
+            assert(false, "A sum of two roots in A_(n-1) is a root, but" + ...
+                "the roots are not of the right form.");
         end
     end
 end
