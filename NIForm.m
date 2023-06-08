@@ -10,7 +10,7 @@ classdef NIForm
         Epsilon 
             % Epsilon = 1 for hermitian or symmetric bilinear
             % Epsilon = -1 for skew-hermitian
-        Matrix % often called H
+        Matrix % often called H (hermitian case) or B (symmetric bilinear case)
         AnisotropicPartVector % often called vec_C or Vector_C
         AnisotropicMatrix % often called C
         PrimitiveElement 
@@ -103,7 +103,5 @@ classdef NIForm
             % Evaluate the related anisotropic form on two row vectors
             val = u*obj.AnisotropicMatrix*transpose(v);
         end
-
     end
-
 end

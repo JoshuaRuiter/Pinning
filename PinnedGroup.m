@@ -406,7 +406,7 @@ classdef PinnedGroup
 %                             % Passes for all special unitary groups
 %                             alpha
 %                             beta
-%                             simplify(LHS)
+                            simplify(LHS)
 %                             simplify(rdivide(LHS,RHS))
                             assert(SymbolicIsEqual(LHS,RHS));
                         end
