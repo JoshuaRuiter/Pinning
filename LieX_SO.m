@@ -9,10 +9,8 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
     n = MatrixSize;
     diff = n-2*q;
 
-    c = sym('c',diff);
-    for i=1:diff
-        c(i) = FormMatrix(q+i, q+i);
-    end
+    c = FormMatrix.AnisotropicPartVector;
+    
     
     %sum alpha to find out the type, possible sums are -2,-1,0,1,2
     type = sum(alpha);
