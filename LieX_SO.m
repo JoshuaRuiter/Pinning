@@ -9,8 +9,11 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
     n = MatrixSize;
     diff = n-2*q;
 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%
     c = FormMatrix.AnisotropicPartVector;
-    
+    % for i=1:diff
+    %     c(i) = FormMatrix(q+i, q+i);
+    % end
     
     %sum alpha to find out the type, possible sums are -2,-1,0,1,2
     type = sum(alpha);
@@ -20,14 +23,14 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
         for i = 1:q
             if alpha(i) == 1
                 for s=1:diff
-                    mat(i,q+s) = -c(s)*v(s);
-                    mat(q+s,q+diff+i) = v(s);
+                    mat(i,2*q+s) = -c(s)*v(s);
+                    mat(2*q+s,q+i) = v(s);
                 end
                 break
             elseif alpha(i) == -1
                 for s=1:(diff)
-                    mat(q+s,i) = v(s);
-                    mat(q+diff+i,q+s) = -c(s)*v(s);
+                    mat(q+i,2*q+s) = -c(s)*v(s);
+                    mat(2*q+s,i) = v(s);
                 end
                 break
             end
@@ -45,7 +48,7 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
             end
         end
         mat(a,b) = v(1);
-        mat(q+diff+b, q+diff+a) = -v(1);
+        mat(q+b, q+a) = -v(1);
 
     elseif type == 2
         a = [0,0];
@@ -56,8 +59,8 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
                 index = index + 1;
             end
         end
-        mat(a(1),q+diff+a(2)) = v(1);
-        mat(a(2),q+diff+a(1)) = -v(1);
+        mat(a(1),q+a(2)) = v(1);
+        mat(a(2),q+a(1)) = -v(1);
 
     elseif type == -2
         a = [0,0];
@@ -68,7 +71,7 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
                 index = index + 1;
             end
         end
-        mat(q+diff+a(1),a(2)) = v(1);
-        mat(q+diff+a(2),a(1)) = -v(1);
+        mat(q+a(1),a(2)) = v(1);
+        mat(q+a(2),a(1)) = -v(1);
     end    
 end
