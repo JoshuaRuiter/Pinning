@@ -178,8 +178,6 @@ classdef PinnedGroup
         end
         function TestCommutatorFormula(obj)
 
-            warning('off','all') % TEMPORARY
-
             fprintf("\n\tChecking commutator formula...");
 
             for i=1:length(obj.RootList)
@@ -209,7 +207,7 @@ classdef PinnedGroup
                         end
 
                         % ORIGINAL TEST
-%                         assert(SymbolicIsEqual(LHS,RHS))
+                        assert(SymbolicIsEqual(LHS,RHS))
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -399,37 +397,37 @@ classdef PinnedGroup
 %                                 end
 %                             end
 %                         end
-
-                        % alpha and beta are short
-                        % This only occurs for non-quasisplit groups
-                        if dot(alpha,alpha)==1 && dot(beta,beta)==1
-%                             % Passes for all special unitary groups
-%                             alpha
-%                             beta
-                            simplify(LHS)
-%                             simplify(rdivide(LHS,RHS))
-                            assert(SymbolicIsEqual(LHS,RHS));
-                        end
-
-                        % alpha is short, beta is medium
-                        % This only occurs for non-quasisplit groups
-                        if dot(alpha,alpha)==1 && dot(beta,beta)==2
-%                             alpha
-%                             beta
-%                             LHS
-%                             simplify(rdivide(LHS,RHS))
+% 
+%                         % alpha and beta are short
+%                         % This only occurs for non-quasisplit groups
+%                         if dot(alpha,alpha)==1 && dot(beta,beta)==1
+% %                             % Passes for all special unitary groups
+% %                             alpha
+% %                             beta
+%                             simplify(LHS)
+% %                             simplify(rdivide(LHS,RHS))
 %                             assert(SymbolicIsEqual(LHS,RHS));
-                        end
-
-                        % alpha is medium, beta is short
-                        % This only occurs for non-quasisplit groups
-                        if dot(alpha,alpha)==2 && dot(beta,beta)==1
-%                             alpha
-%                             beta
-%                             LHS
-%                             simplify(rdivide(LHS,RHS))
-%                             assert(SymbolicIsEqual(LHS,RHS));
-                        end
+%                         end
+% 
+%                         % alpha is short, beta is medium
+%                         % This only occurs for non-quasisplit groups
+%                         if dot(alpha,alpha)==1 && dot(beta,beta)==2
+% %                             alpha
+% %                             beta
+% %                             LHS
+% %                             simplify(rdivide(LHS,RHS))
+% %                             assert(SymbolicIsEqual(LHS,RHS));
+%                         end
+% 
+%                         % alpha is medium, beta is short
+%                         % This only occurs for non-quasisplit groups
+%                         if dot(alpha,alpha)==2 && dot(beta,beta)==1
+% %                             alpha
+% %                             beta
+% %                             LHS
+% %                             simplify(rdivide(LHS,RHS))
+% %                             assert(SymbolicIsEqual(LHS,RHS));
+%                         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End segmented tests for special unitary group commutator coefficients
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -438,8 +436,6 @@ classdef PinnedGroup
                 end
             end
             fprintf("passed.")
-
-            warning('on','all') % TEMPORARY
 
         end
         function TestWeylGroupElements(obj)
