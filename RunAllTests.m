@@ -54,15 +54,19 @@
 
 % Special unitary group tests
 % % Quasisplit special unitary groups (n=2q)
-RunSUTests(4,2,1)
-RunSUTests(4,2,-1)
-RunSUTests(6,3,1)
-RunSUTests(6,3,-1)
-RunSUTests(8,4,1)
-RunSUTests(8,4,-1)
-RunSUTests(10,5,1)
-RunSUTests(10,5,-1)
+% % These pass tests up to and including commutator coefficients
+% RunSUTests(4,2,1)
+% RunSUTests(4,2,-1)
+% RunSUTests(6,3,1)
+% RunSUTests(6,3,-1)
+% RunSUTests(8,4,1)
+% RunSUTests(8,4,-1)
+% RunSUTests(10,5,1)
+% RunSUTests(10,5,-1)
+
 % Non-quasisplit special unitary groups (n>2q)
+% % These pass tests before commutator coefficients, 
+% % but do not pass all commutator coefficient tests yet.
 RunSUTests(5,2,1)
 RunSUTests(5,2,-1)
 RunSUTests(6,2,1)

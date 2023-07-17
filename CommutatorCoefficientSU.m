@@ -5,10 +5,9 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,Form,alpha,beta,i,j,
     % X_{i*alpha+j*beta} appearing on the right hand side of the formula
     % for the commutator [X_alpha(u), X_beta(v)]
 
-    n = MatrixSize;
 
     % Validating inputs
-    assert(i>=1);
+    n = MatrixSize;assert(i>=1);
     assert(j>=1);
     assert(strcmp(Root_System.Type,'C') || strcmp(Root_System.Type,'BC'))
     assert(Root_System.VectorLength == MatrixSize)
