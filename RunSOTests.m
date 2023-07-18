@@ -37,7 +37,6 @@ function RunSOTests(n,q)
 
 end
 
-
 function bool = IsIn_little_so(MatrixSize, MatrixToTest, Form)
     % Return true if X belongs to the special orthogonal Lie algebra defined by B
     bool = length(MatrixToTest)==MatrixSize &&...
@@ -80,7 +79,6 @@ function bool = IsTorusElementSO(MatrixSize, RootSystemRank, MatrixToTest)
     end
         
 end
-
 function num = HomDefectCoefficientSO(MatrixSize,RootSystem,Form,u,v)  %#ok<INUSD> 
     num = 0;
 end

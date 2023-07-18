@@ -32,6 +32,7 @@ function N = CommutatorCoefficientSU(MatrixSize,Root_System,Form,alpha,beta,i,j,
 
     assert(Root_System.IsRoot(alpha+beta))
     assert(Root_System.IsRoot(i*alpha+j*beta))
+    
     combos = Root_System.LinearCombos(alpha,beta);
     assert(length(combos)>=1)
 

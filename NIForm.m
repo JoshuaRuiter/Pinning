@@ -104,4 +104,5 @@ classdef NIForm
             val = u*obj.AnisotropicMatrix*transpose(v);
         end
     end
+    
 end

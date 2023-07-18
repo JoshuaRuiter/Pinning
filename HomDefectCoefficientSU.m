@@ -33,7 +33,7 @@ function value = HomDefectCoefficientSU(MatrixSize,Root_System,Form,alpha,u,v)
         % Finally compute the value of the coefficient which is the whole purpose of this script
         value = 0;
         for j=1:n-2*q
-            value = value - vec_C(j)*(u_bar(j)*v_complex(j)- u_complex(j)*v_bar(j))/(2*P);
+            value = value - vec_C(j) * (u_bar(j)*v_complex(j)- u_complex(j)*v_bar(j)) / (2*P);
         end
 
         if eps == -1

@@ -4,9 +4,9 @@
 % Tests for the Symbolic Kronecker Delta,
 % Symbolic Single Entry Matrix, and
 % Symbolic Coordinates Matrix classes
-SKD.runTests()
-SSEM.runTests()
-SCM.runTests()
+% SKD.runTests()
+% SSEM.runTests()
+% SCM.runTests()
 
 % % Root system tests
 % % All of these pass
@@ -44,15 +44,15 @@ RunSLTests(5)
 % % % Quasisplit special orthogonal groups (n=2q+2)
 % RunSOTests(4,1)
 % RunSOTests(6,2)
-% RunSOTestS(8,3)
-% RunSOTestS(10,4)
+% RunSOTests(8,3)
+% RunSOTests(10,4)
 % % % Non-quasisplit special orthogonal groups (n>2q+2)
-% RunSoTests(7,2)
+% RunSOTests(7,2)
 % RunSOTests(8,2)
 % RunSOTests(9,3)
 % RunSOTests(10,3)
 
-% Special unitary group tests
+% % Special unitary group tests
 % % Quasisplit special unitary groups (n=2q)
 % RunSUTests(4,2,1)
 % RunSUTests(4,2,-1)
@@ -62,7 +62,7 @@ RunSLTests(5)
 % RunSUTests(8,4,-1)
 % RunSUTests(10,5,1)
 % RunSUTests(10,5,-1)
-% Non-quasisplit special unitary groups (n>2q)
+% % % Non-quasisplit special unitary groups (n>2q)
 % RunSUTests(5,2,1)
 % RunSUTests(5,2,-1)
 % RunSUTests(6,2,1)

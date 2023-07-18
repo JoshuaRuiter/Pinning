@@ -54,7 +54,7 @@ classdef PinnedGroup
         % Tests
         function RunTests(obj)
             obj.Root_System.VerifyProperties();
-            fprintf("Running tests to verify a pinning of the " + obj.NameString + "...\n")
+            fprintf("Running tests to verify a pinning of the " + obj.NameString + "...")
             TestBasics(obj);
             TestRootSpaceMapsAreHomomorphisms(obj);
             TestRootSubgroupMapsAreAlmostHomomorphisms(obj);
@@ -62,7 +62,7 @@ classdef PinnedGroup
             TestCommutatorFormula(obj);
             TestWeylGroupElements(obj);
             TestWeylGroupConjugationFormula(obj);
-            fprintf("\n\nAll tests passed.\n\n")
+            fprintf("\nAll tests passed.\n\n")
         end
         function TestBasics(obj)
             fprintf("\n\tChecking basic properties...");
@@ -87,7 +87,7 @@ classdef PinnedGroup
             end
             fprintf("passed.")
         
-            fprintf("\n\tBasic tests passed.\n")
+            fprintf("\n\t\tBasic tests passed.")
         end
         function TestRootSpaceMapsAreHomomorphisms(obj)
             % Run tests to confirm that RootSpaceMap is a homomorphism
@@ -177,8 +177,6 @@ classdef PinnedGroup
             fprintf("passed.")
         end
         function TestCommutatorFormula(obj)
-
-            warning('off','all') % TEMPORARY
 
             fprintf("\n\tChecking commutator formula...");
 
@@ -438,8 +436,6 @@ classdef PinnedGroup
                 end
             end
             fprintf("passed.")
-
-            warning('on','all') % TEMPORARY
 
         end
         function TestWeylGroupElements(obj)
