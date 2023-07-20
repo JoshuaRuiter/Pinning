@@ -245,14 +245,14 @@ classdef PinnedGroup
                         % alpha is short, beta is medium
                         % This only occurs for non-quasisplit groups
                         if dot(alpha,alpha)==1 && dot(beta,beta)==2
-                              % Tests do not pass yet
+                            % Tests do not pass yet
                             alpha
                             beta
                             LHS
                             simplify(rdivide(LHS,RHS))
                             assert(SymbolicIsEqual(LHS,RHS));
                         end
-% 
+
 %                         % alpha is medium, beta is short
 %                         % This only occurs for non-quasisplit groups
 %                         if dot(alpha,alpha)==2 && dot(beta,beta)==1
@@ -261,7 +261,7 @@ classdef PinnedGroup
 % %                             beta
 % %                             LHS
 % %                             simplify(rdivide(LHS,RHS))
-% %                             assert(SymbolicIsEqual(LHS,RHS));
+%                             assert(SymbolicIsEqual(LHS,RHS));
 %                         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End segmented tests for special unitary group commutator coefficients
