@@ -1,19 +1,17 @@
-function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
+function mat = LieX_SO(MatrixSize, Root_System, Form, alpha, v)
     %UNTITLED Summary of this function goes here
     %   Detailed explanation goes here
     
+    n = MatrixSize;
     q = Root_System.Rank;
+    diff = n-2*q;
+    mat = sym(zeros(MatrixSize));
+    c = Form.AnisotropicPartVector;
+
     assert(Root_System.IsRoot(alpha));
     assert(MatrixSize > 2*q);
-    mat = sym(zeros(MatrixSize));
-    n = MatrixSize;
-    diff = n-2*q;
+    assert(length(v)==RootSpaceDimensionSO(MatrixSize, Root_System, alpha))
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%
-    c = FormMatrix.AnisotropicPartVector;
-    % for i=1:diff
-    %     c(i) = FormMatrix(q+i, q+i);
-    % end
     
     %sum alpha to find out the type, possible sums are -2,-1,0,1,2
     type = sum(alpha);
