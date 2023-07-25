@@ -1,4 +1,4 @@
-function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
+function mat = LieX_SO(MatrixSize, Root_System, Form, alpha, v)
     %UNTITLED Summary of this function goes here
     %   Detailed explanation goes here
     
@@ -8,18 +8,16 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
     mat = sym(zeros(MatrixSize));
     n = MatrixSize;
     diff = n-2*q;
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%
-    c = FormMatrix.AnisotropicPartVector;
-    % for i=1:diff
-    %     c(i) = FormMatrix(q+i, q+i);
-    % end
+    c = Form.AnisotropicPartVector;
     
     %sum alpha to find out the type, possible sums are -2,-1,0,1,2
     type = sum(alpha);
  
-    % root with 2d map
+    % Short root
+    % has root space of dimension diff=n-2q
     if type == 1 || type == -1
+        % alpha is a short root, of the form +/- alpha_i
+        assert(length(v)==diff);
         for i = 1:q
             if alpha(i) == 1
                 for s=1:diff
@@ -28,16 +26,19 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
                 end
                 break
             elseif alpha(i) == -1
-                for s=1:(diff)
+                for s=1:diff
                     mat(q+i,2*q+s) = -c(s)*v(s);
                     mat(2*q+s,i) = v(s);
                 end
                 break
             end
-        end
+         end
 
-    % roots with 1d map
+    % Long root
+    % has root space with dimension 1
     elseif type == 0
+        % alpha is a long root of the form alpha_i-alpha_j
+        assert(length(v)==1);
         a = 0;
         b = 0;
         for i = 1:q
@@ -51,26 +52,36 @@ function mat = LieX_SO(MatrixSize, Root_System, FormMatrix, alpha, v)
         mat(q+b, q+a) = -v(1);
 
     elseif type == 2
-        a = [0,0];
-        index = 1;
-        for i = 1:q
-            if alpha(i) == 1
-                a(index) = i;
-                index = index + 1;
-            end
-        end
+        assert(length(v)==1);
+
+        % This accomplishes the code below in one line
+        a = find(alpha==1);
+%         a = [0,0];
+%         index = 1;
+%         for i = 1:q
+%             if alpha(i) == 1
+%                 a(index) = i;
+%                 index = index + 1;
+%             end
+%         end
+
         mat(a(1),q+a(2)) = v(1);
         mat(a(2),q+a(1)) = -v(1);
 
     elseif type == -2
-        a = [0,0];
-        index = 1;
-        for i = 1:q
-            if alpha(i) == -1
-                a(index) = i;
-                index = index + 1;
-            end
-        end
+        assert(length(v)==1);
+
+        % This accomplishes the code below in one line
+        a = find(alpha==-1);
+%         a = [0,0];
+%         index = 1;
+%         for i = 1:q
+%             if alpha(i) == -1
+%                 a(index) = i;
+%                 index = index + 1;
+%             end
+%         end
+
         mat(q+a(1),a(2)) = v(1);
         mat(q+a(2),a(1)) = -v(1);
     end    
