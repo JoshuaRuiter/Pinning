@@ -1,4 +1,5 @@
 function mat = LieGroup_SO(n,q)
+
     %LIEX Summary of this function goes here
     %   Detailed explanation goes here
     assert(n == 2*q+2);

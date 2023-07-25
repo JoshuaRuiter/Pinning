@@ -50,14 +50,14 @@ function bool = IsInSO(MatrixSize, MatrixToTest, Form)
 end
 function myMatrix = GenericTorusElementSO(MatrixSize, RootSystemRank, vec_t)
     assert(length(vec_t)==RootSystemRank);
-    myMatrix = sym(zeros(MatrixSize));
+    myMatrix = sym(eye(MatrixSize));
     for i=1:length(vec_t)
         myMatrix(i,i) = vec_t(i);
-        myMatrix(MatrixSize - RootSystemRank + i, MatrixSize - RootSystemRank + i) = vec_t(i)^(-1);
+        myMatrix(RootSystemRank + i, RootSystemRank + i) = vec_t(i)^(-1);
     end
-    for i=1:MatrixSize - 2*RootSystemRank
-        myMatrix(RootSystemRank+i,RootSystemRank+i) = 1;
-    end
+    % for i=1:MatrixSize - 2*RootSystemRank
+    %     myMatrix(RootSystemRank+i,RootSystemRank+i) = 1;
+    % end
     assert(length(myMatrix)==MatrixSize)
     assert(det(myMatrix)==1)
 end
