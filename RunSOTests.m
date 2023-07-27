@@ -63,19 +63,22 @@ function myMatrix = GenericTorusElementSO(MatrixSize, RootSystemRank, vec_t)
 end
 function bool = IsTorusElementSO(MatrixSize, RootSystemRank, MatrixToTest)
     
+    n = MatrixSize;
+    q = RootSystemRank;
+    T = MatrixToTest;
+
     % Check for correct matrix dimensions
-    bool = (length(MatrixToTest)==MatrixSize) && SymbolicIsDiag(MatrixToTest);
+    bool = (length(T)==n) && SymbolicIsDiag(T);
 
-    % Check that the first q entries and the last q diagonal entries are
+    % Check that the first q entries and the next q diagonal entries are
     % respective inverses
-
-    for i=1:RootSystemRank
-        bool = bool && (MatrixToTest(i,i) == MatrixToTest(MatrixSize+1-i,MatrixSize+1-i)^(-1));
+    for i=1:q
+        bool = bool && (T(i,i) == T(q+i,q+i)^(-1));
     end
 
-    % Check that the middle block is the identity
-    for i=RootSystemRank+1:MatrixSize-RootSystemRank
-        bool = bool && (MatrixToTest(i,i) == 1);
+    % Check that the final block is the identity
+    for i=2*q+1:n
+        bool = bool && (T(i,i) == 1);
     end
         
 end

@@ -1,26 +1,43 @@
-function mat = W_SO(MatrixSize,Root_System,FormMatrix,alpha,u)
+function mat = W_SO(MatrixSize,Root_System,Form,alpha,u)
     % Return the Weyl group element w_alpha(u) associated with alpha
     % Note that this is undefined when u=0, so maybe there should be
     % something like assert(u~=0)
     
-    % Extract anisotropic part of form matrix
-    c1 = FormMatrix(2,2);
-    c2 = FormMatrix(3,3);
+    assert(dot(alpha,alpha)==1 || dot(alpha,alpha)==2)
+    assert(strcmpi(Root_System.Type,'B'))
+    assert(length(u)==RootSpaceDimensionSO(MatrixSize,Root_System,alpha))
 
-    % Extract values from the vector u
-    assert(length(u)==2);
-    u1 = u(1);
-    u2 = u(2);
+    n = MatrixSize;
+    q = Root_System.Rank;
+    vec_C = Form.AnisotropicPartVector;
+    
+    if dot(alpha,alpha)==2
+        % alpha is a long root
+        % so the root space is one-dimensional
+        assert(length(u)==1)
 
-    % Compute the values of a new vector v
-    Qu = c1*u1^2+c2*u2^2;
-    v1 = 2*u1/Qu;
-    v2 = 2*u2/Qu;
-    v = [v1, v2];
+        if abs(sum(alpha))==2
+            v = u^(-1);
+        elseif abs(sum(alpha))==0
+            v = -u^(-1);
+        else
+            % This should be impossible
+            assert(false)
+        end
 
-    mat = X_SO(MatrixSize,Root_System,FormMatrix,alpha,u)*...
-        X_SO(MatrixSize,Root_System,FormMatrix,-alpha,v)*...
-        X_SO(MatrixSize,Root_System,FormMatrix,alpha,u);
+    elseif dot(alpha,alpha)==1
+        % alpha is a short root
+        assert(length(u)==n-2*q)
+        Qu = sym(0);
+        for i=1:n-2*q
+            Qu = Qu+vec_C(i)*u(i)^2;
+        end
+        v = 2*u/Qu;
+    end
+
+    mat = X_SO(MatrixSize,Root_System,Form,alpha,u)*...
+        X_SO(MatrixSize,Root_System,Form,-alpha,v)*...
+        X_SO(MatrixSize,Root_System,Form,alpha,u);
 
     % Why does W_SO have this form, and how was v determined?
     % Let w = W_SO(alpha,u)
@@ -42,4 +59,5 @@ function mat = W_SO(MatrixSize,Root_System,FormMatrix,alpha,u)
     % a more complicated linear transformation of v,
     % albeit a linear transformation which when written as a matrix
     % does seem to square to the identity
+
 end

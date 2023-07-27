@@ -60,7 +60,7 @@ classdef PinnedGroup
             TestRootSubgroupMapsAreAlmostHomomorphisms(obj);
             TestTorusConjugationFormula(obj);
 %             TestCommutatorFormula(obj);
-%             TestWeylGroupElements(obj);
+            TestWeylGroupElements(obj);
 %             TestWeylGroupConjugationFormula(obj);
             fprintf("\n\nAll tests passed.\n\n")
         end

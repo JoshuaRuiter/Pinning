@@ -1,8 +1,8 @@
 % Calculating some example commutator coefficients 
 % for special orthogonal groups
 
-n = 8;
-q = 3;
+n = 7;
+q = 2;
 
 NameString = strcat('special orthogonal group of size',{' '},num2str(n),{' '},'with Witt index',{' '},num2str(q));
 MatrixSize = n;
@@ -34,6 +34,23 @@ SO_n_q = PinnedGroup(NameString,MatrixSize,Root_System,Form,...
     RootSpaceDimension,RootSpaceMap,RootSubgroupMap,WeylGroupMap,GenericTorusElementMap,...
     IsGroupElement,IsTorusElement,IsLieAlgebraElement,...
     HomDefectCoefficientSO_label, CommutatorCoefficientMap,WeylGroupCoefficientMap);
+
+alpha = [1,0,0,0,0,0,0];
+dim_V_alpha = RootSpaceDimensionSO(MatrixSize,Root_System,alpha);
+u = sym('u',[dim_V_alpha,1]);
+X_alpha_u = X_SO(MatrixSize, Root_System, Form, alpha, u);
+
+beta = [0,1,0,0,0,0,0];
+dim_V_beta = RootSpaceDimensionSO(MatrixSize,Root_System,beta);
+v = sym('v',[dim_V_beta,1]);
+X_beta_v = X_SO(MatrixSize, Root_System, Form, beta, v);
+
+commutator = Commutator(X_alpha_u,X_beta_v)
+
+sum = alpha+beta;
+dim_V_sum = RootSpaceDimensionSO(MatrixSize,Root_System,sum);
+w = sym('w',[dim_V_sum,1]);
+X_sum_w = X_SO(MatrixSize, Root_System, Form, sum, w)
 
 for i=1:length(Root_System.RootList)
     alpha = Root_System.RootList{i};

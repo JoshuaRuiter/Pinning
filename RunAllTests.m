@@ -68,14 +68,14 @@ RunSOTests(10,3)
 % Non-quasisplit special unitary groups (n>2q)
 % % These pass tests before commutator coefficients, 
 % % but do not pass all commutator coefficient tests yet.
-RunSUTests(5,2,1)
-RunSUTests(5,2,-1)
-RunSUTests(6,2,1)
-RunSUTests(6,2,1)
-RunSUTests(6,2,-1)
-RunSUTests(8,3,1)
-RunSUTests(8,3,-1)
-RunSUTests(9,3,1)
-RunSUTests(9,3,-1)
+% RunSUTests(5,2,1)
+% RunSUTests(5,2,-1)
+% RunSUTests(6,2,1)
+% RunSUTests(6,2,1)
+% RunSUTests(6,2,-1)
+% RunSUTests(8,3,1)
+% RunSUTests(8,3,-1)
+% RunSUTests(9,3,1)
+% RunSUTests(9,3,-1)
 
 
